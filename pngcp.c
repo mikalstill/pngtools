@@ -4,7 +4,7 @@
 #include <png.h>
 #include <unistd.h>
 
-void pnginfo_copyfile(char *, int);
+void pnginfo_copyfile(char *, char *, int);
 void pnginfo_error(char *);
 void *pnginfo_xmalloc(size_t);
 void usage(void);
@@ -18,8 +18,6 @@ int main(int argc, char *argv[]){
 
   // Use getopt to determine what we have been asked to do
   while((optchar = getopt(argc, argv, "i:o:w:")) != -1){
-    printf("Optchar is %c [%s]\n", optchar, optarg);
-
     switch(optchar){
     case 'i':
       // The name of the input file
@@ -32,7 +30,7 @@ int main(int argc, char *argv[]){
       break;
 
     case 'w':
-      //destwidth = atoi(optarg);
+      destwidth = atoi(optarg);
       break;
 
     case '?':
@@ -46,12 +44,12 @@ int main(int argc, char *argv[]){
   if(argc < 2)
     usage();
 
-  pnginfo_copyfile(input, destwidth);
+  pnginfo_copyfile(input, output, destwidth);
 }
 
-void pnginfo_copyfile(char *filename, int destwidth){
+void pnginfo_copyfile(char *input, char *output, int destwidth){
   FILE *image;
-  unsigned long imageBufSize, width, height, runlen;
+  unsigned long imageBufSize, width, height;
   unsigned char signature;
   int bitdepth, colourtype;
   png_uint_32 i, j, rowbytes;
@@ -61,10 +59,8 @@ void pnginfo_copyfile(char *filename, int destwidth){
   png_bytepp row_pointers = NULL;
   char *bitmap;
 
-  printf("%s...\n", filename);
-
   // Open the file
-  if ((image = fopen (filename, "rb")) == NULL)
+  if ((image = fopen (input, "rb")) == NULL)
     pnginfo_error ("Could not open the specified PNG file.");
 
   // Check that it really is a PNG file
@@ -115,28 +111,26 @@ void pnginfo_copyfile(char *filename, int destwidth){
   png_read_end (png, NULL);
   
   // Do we want to display this bitmap?
-  printf("Dumping the bitmap for this image:\n");
+
   
-  runlen = 0;
-  for(i = 0; i < rowbytes * height / 3; i+=3){
-    if((runlen != 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
-       && (bitmap[i] == 0)) runlen++;
-    else if(runlen != 0){
-      printf("* %d ", runlen);
-      runlen = 0;
-    }
-    
-    if((runlen == 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
-       && (bitmap[i] == 0)){
-      printf("[0, 0, 0] ");
-      runlen++;
-    }
-    
-    if(runlen == 0)
-      printf("[%02x %02x %02x] ", (unsigned char) bitmap[i],
-	     (unsigned char) bitmap[i + 1],
-	     (unsigned char) bitmap[i + 2]);
-  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   
   // This cleans things up for us in the PNG library
   fclose(image);
@@ -167,5 +161,5 @@ pnginfo_xmalloc (size_t size)
 }
 
 void usage(){
-  pnginfo_error("Usage: pnginfo [-d] [-D] <filenames>");
+  pnginfo_error("Usage: pngcp ---update this---");
 }
