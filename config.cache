@@ -14,31 +14,16 @@
 #
 ac_cv_func_snprintf=${ac_cv_func_snprintf='yes'}
 ac_cv_func_vprintf=${ac_cv_func_vprintf='yes'}
-ac_cv_header_jpeglib_h=${ac_cv_header_jpeglib_h='yes'}
 ac_cv_header_png_h=${ac_cv_header_png_h='yes'}
-ac_cv_header_pthread_h=${ac_cv_header_pthread_h='yes'}
 ac_cv_header_stdc=${ac_cv_header_stdc='yes'}
 ac_cv_header_stdio_h=${ac_cv_header_stdio_h='yes'}
-ac_cv_header_sys_stat_h=${ac_cv_header_sys_stat_h='yes'}
-ac_cv_header_tiffio_h=${ac_cv_header_tiffio_h='yes'}
-ac_cv_header_unistd_h=${ac_cv_header_unistd_h='yes'}
-ac_cv_header_windows_h=${ac_cv_header_windows_h='no'}
-ac_cv_lib_dmalloc_malloc=${ac_cv_lib_dmalloc_malloc='yes'}
-ac_cv_lib_fl_yywrap=${ac_cv_lib_fl_yywrap='yes'}
-ac_cv_lib_jpeg_jpeg_std_error=${ac_cv_lib_jpeg_jpeg_std_error='yes'}
 ac_cv_lib_m_atan=${ac_cv_lib_m_atan='yes'}
 ac_cv_lib_png_png_libpng_ver=${ac_cv_lib_png_png_libpng_ver='yes'}
-ac_cv_lib_tiff_TIFFOpen=${ac_cv_lib_tiff_TIFFOpen='yes'}
 ac_cv_path_install=${ac_cv_path_install='/usr/bin/install -c'}
 ac_cv_prog_CC=${ac_cv_prog_CC='gcc'}
 ac_cv_prog_CPP=${ac_cv_prog_CPP='gcc -E'}
-ac_cv_prog_LEX=${ac_cv_prog_LEX='flex'}
-ac_cv_prog_RANLIB=${ac_cv_prog_RANLIB='ranlib'}
-ac_cv_prog_YACC=${ac_cv_prog_YACC='bison -y'}
 ac_cv_prog_cc_cross=${ac_cv_prog_cc_cross='no'}
 ac_cv_prog_cc_g=${ac_cv_prog_cc_g='yes'}
 ac_cv_prog_cc_works=${ac_cv_prog_cc_works='yes'}
 ac_cv_prog_gcc=${ac_cv_prog_gcc='yes'}
-ac_cv_prog_lex_root=${ac_cv_prog_lex_root='lex.yy'}
-ac_cv_prog_lex_yytext_pointer=${ac_cv_prog_lex_yytext_pointer='yes'}
 ac_cv_prog_make_make_set=${ac_cv_prog_make_make_set='yes'}

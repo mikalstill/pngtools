@@ -58,9 +58,15 @@ NORMAL_UNINSTALL = :
 PRE_UNINSTALL = :
 POST_UNINSTALL = :
 CC = gcc
+LEX = @LEX@
+MAINT = #
+MAKEINFO = makeinfo
+PACKAGE = pngtools
+VERSION = 0.1
 
 bin_PROGRAMS = pnginfo
 pnginfo_SOURCES = pnginfo.c
+ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_CLEAN_FILES = 
 PROGRAMS =  $(bin_PROGRAMS)
@@ -78,11 +84,9 @@ CFLAGS = -g -O2
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(LDFLAGS) -o $@
-DIST_COMMON =  Makefile.am Makefile.in configure configure.in
+DIST_COMMON =  README AUTHORS COPYING ChangeLog INSTALL Makefile.am \
+Makefile.in NEWS aclocal.m4 configure configure.in
 
-
-PACKAGE = pngtools
-VERSION = 0.1
 
 DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
@@ -102,6 +106,8 @@ Makefile: $(srcdir)/Makefile.in  $(top_builddir)/config.status $(BUILT_SOURCES)
 	cd $(top_builddir) \
 	  && CONFIG_FILES=$@ CONFIG_HEADERS= $(SHELL) ./config.status
 
+$(ACLOCAL_M4): # configure.in 
+	cd $(srcdir) && $(ACLOCAL)
 
 config.status: $(srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	$(SHELL) ./config.status --recheck

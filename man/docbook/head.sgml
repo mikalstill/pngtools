@@ -1,6 +1,6 @@
 <!-- 
 
-     This document is part of the panda distribution, and is covered
+     This document is part of the pngtools distribution, and is covered
      by the GNU GPL, a copy of which is in the file named COPYING inside the
      distribution.
 
@@ -8,6 +8,8 @@
      they will be useful,but WITHOUT ANY WARRANTY; without even the implied 
      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
      GNU General Public License for more details.
+
+     (c) Michael Still, 2001
 -->
 
 <!DOCTYPE refentry PUBLIC "-//Davenport//DTD DocBook V3.0//EN">

@@ -1,5 +1,67 @@
-// The output of this program is based on tiffinfo, from the libtiff 
-// distribution
+/******************************************************************************
+DOCBOOK START
+
+FUNCTION pnginfo
+PURPOSE display information on the PNG files named
+
+SYNOPSIS START
+pnginfo <filenames>
+SYNOPSIS END
+
+DESCRIPTION START
+This command dumps information about the PNG files named on the command line. This command's output is based on the output of the <command>tiffinfo</command> command, which is part of the <command>libtiff</command> distribution. Each line output by the command represents a value that has been set within the PNG file.
+DESCRIPTION END
+
+RETURNS Nothing
+
+EXAMPLE START
+%bash: pnginfo toucan.png basn3p02.png basn6a16.png
+toucan.png...
+  Image Width: 162 Image Length: 150
+  Bits/Sample: 8
+  Samples/Pixel: 1
+  Pixel Depth: 8
+  Photometric Interpretation: PALETTED COLOUR with alpha (256 colours, 256 transparent) 
+  Image filter: Single row per byte filter 
+  Interlacing: Adam7 interlacing 
+  Compression Scheme: Deflate method 8, 32k window
+  Resolution: 0, 0 (unit unknown)
+  FillOrder: msb-to-lsb
+  Byte Order: Network (Big Endian)
+  Number of text strings: 0 of 0
+
+basn3p02.png...
+  Image Width: 32 Image Length: 32
+  Bits/Sample: 2
+  Samples/Pixel: 1
+  Pixel Depth: 2
+  Photometric Interpretation: PALETTED COLOUR (4 colours, 0 transparent) 
+  Image filter: Single row per byte filter 
+  Interlacing: No interlacing 
+  Compression Scheme: Deflate method 8, 32k window
+  Resolution: 0, 0 (unit unknown)
+  FillOrder: msb-to-lsb
+  Byte Order: Network (Big Endian)
+  Number of text strings: 0 of 0
+
+basn6a16.png...
+  Image Width: 32 Image Length: 32
+  Bits/Sample: 16
+  Samples/Pixel: 4
+  Pixel Depth: 64
+  Photometric Interpretation: RGB with alpha channel 
+  Image filter: Single row per byte filter 
+  Interlacing: No interlacing 
+  Compression Scheme: Deflate method 8, 32k window
+  Resolution: 0, 0 (unit unknown)
+  FillOrder: msb-to-lsb
+  Byte Order: Network (Big Endian)
+  Number of text strings: 0 of 0
+
+EXAMPLE END
+SEEALSO libpng libtiff tiffinfo
+DOCBOOK END
+******************************************************************************/
 
 #include <stdio.h>
 #include <stdlib.h>
