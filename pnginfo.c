@@ -352,11 +352,17 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
 	   && (bitmap[i] == 0)) runlen++;
 	else if(runlen != 0){
 	  printf("* %d ", runlen);
-	  runlen == 0;
+	  runlen = 0;
+	}
+
+	if((runlen == 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
+	   && (bitmap[i] == 0)){
+	  printf("[0, 0, 0] ");
+	  runlen++;
 	}
 	
 	if(runlen == 0)
-	  printf("[%d, %d, %d] ", (unsigned char) bitmap[i],
+	  printf("[%02x %02x %02x] ", (unsigned char) bitmap[i],
 		 (unsigned char) bitmap[i + 1],
 		 (unsigned char) bitmap[i + 2]);
       }
@@ -377,6 +383,7 @@ pnginfo_error (char *message)
   exit (42);
 }
 
+// Allocate some memory
 void *
 pnginfo_xmalloc (size_t size)
 {
