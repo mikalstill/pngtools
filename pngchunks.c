@@ -135,10 +135,20 @@ int main(int argc, char *argv[])
 	      break;
 	    }
 
-	  switch( ((pngchunks_IHDR *) offset)->filter)
+	  switch( ((pngchunks_IHDR *) offset)->interlace)
 	    {
 	    case 0:
-	      printf
+	      printf("  IHDR Interlacing is disabled\n");
+	      break;
+
+	    case 7:
+	      printf("  IHDR Interlacing is Adam7\n");
+	      break;
+	      
+	    default:
+	      printf("  IHDR Interlacing method is unknown\n");
+	      break;
+	    }
 	}
       else if(strncmp(head->type.c, "IDAT", 4) == 0)
 	{
