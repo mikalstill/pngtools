@@ -21,7 +21,7 @@ toucan.png...
   Bits/Sample: 8
   Samples/Pixel: 1
   Pixel Depth: 8
-  Photometric Interpretation: PALETTED COLOUR with alpha (256 colours, 256 transparent) 
+  Colour Type (Photometric Interpretation): PALETTED COLOUR with alpha (256 colours, 256 transparent) 
   Image filter: Single row per byte filter 
   Interlacing: Adam7 interlacing 
   Compression Scheme: Deflate method 8, 32k window
@@ -35,7 +35,7 @@ basn3p02.png...
   Bits/Sample: 2
   Samples/Pixel: 1
   Pixel Depth: 2
-  Photometric Interpretation: PALETTED COLOUR (4 colours, 0 transparent) 
+  Colour Type (Photometric Interpretation): PALETTED COLOUR (4 colours, 0 transparent) 
   Image filter: Single row per byte filter 
   Interlacing: No interlacing 
   Compression Scheme: Deflate method 8, 32k window
@@ -49,7 +49,7 @@ basn6a16.png...
   Bits/Sample: 16
   Samples/Pixel: 4
   Pixel Depth: 64
-  Photometric Interpretation: RGB with alpha channel 
+  Colour Type (Photometric Interpretation): RGB with alpha channel 
   Image filter: Single row per byte filter 
   Interlacing: No interlacing 
   Compression Scheme: Deflate method 8, 32k window
@@ -142,7 +142,7 @@ void pnginfo_displayfile(char *filename){
   printf("  Pixel Depth: %d\n", info->pixel_depth);  // Does this add value?
 
   // Photometric interp packs a lot of information
-  printf("  Photometric Interpretation: ");
+  printf("  Colour Type (Photometric Interpretation): ");
 
   switch(colourtype){
   case PNG_COLOR_TYPE_GRAY:
@@ -303,7 +303,7 @@ pnginfo_xmalloc (size_t size)
 
   if ((buffer = malloc (size)) == NULL)
     {
-      pnginfo_error ("panda_xmalloc failed to allocate memory");
+      pnginfo_error ("pnginfo_xmalloc failed to allocate memory");
     }
 
   return buffer;
