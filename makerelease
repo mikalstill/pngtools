@@ -31,7 +31,7 @@ done
 
 delname="Makefile autom4te.cache config.cache config.log config.status logfile math config.h output.pdf .deps"
 
-# Get rid of makefiles
+# Get rid of unwanted files
 for filename in $delname
 do
   for item in `find . -name $filename -print`
@@ -39,6 +39,9 @@ do
     rm -ri $item
   done
 done
+
+rm -ri "#*#"
+rm -ri *~
 
 # How much space do we use?
 du -sk

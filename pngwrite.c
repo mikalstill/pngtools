@@ -60,6 +60,9 @@ int pngcp_writeimage(char *filename, unsigned long width, unsigned long height,
   // This is needed before IO will work (unless you define callbacks)
   png_init_io(png, image);
 
+  // We need to derive a PNG color type from the number of channels and bitdepth
+  
+
   // Define important stuff about the image
   png_set_IHDR (png, info, width, height, bitdepth, PNG_COLOR_TYPE_RGB,
                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
