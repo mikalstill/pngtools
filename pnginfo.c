@@ -123,7 +123,7 @@ int main(int argc, char *argv[]){
 
 void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
   FILE *image;
-  unsigned long imageBufSize, width, height;
+  unsigned long imageBufSize, width, height, runlen;
   unsigned char signature;
   int bitdepth, colourtype;
   png_uint_32 i, j, rowbytes;
@@ -131,6 +131,7 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
   png_infop info;
   unsigned char sig[8];
   png_bytepp row_pointers = NULL;
+  char *bitmap;
 
   printf("%s...\n", filename);
 
@@ -319,7 +320,9 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
   // Print a blank line
   printf("\n");
 
-  // Do we want to extract the image data?
+  // Do we want to extract the image data? We are meant to tell the user if
+  // there are errors, but we don't currently trap any errors here -- I need
+  // to look into this
   if(extractBitmap == pnginfo_true){
     if (colourtype == PNG_COLOR_TYPE_PALETTE)
       png_set_expand (png);
@@ -328,14 +331,13 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
     png_read_update_info (png, info);
     
     rowbytes = png_get_rowbytes (png, info);
-    imageObj->binarystream =
-      (unsigned char *) panda_xmalloc ((rowbytes * height) + 1);
-    imageObj->binarystreamLength = rowbytes * height;
-    row_pointers = panda_xmalloc (height * sizeof (png_bytep));
+    bitmap =
+      (unsigned char *) pnginfo_xmalloc ((rowbytes * height) + 1);
+    row_pointers = pnginfo_xmalloc (height * sizeof (png_bytep));
     
     // Get the image bitmap
     for (i = 0; i < height; ++i)
-      row_pointers[i] = imageObj->binarystream + (i * rowbytes);
+      row_pointers[i] = bitmap + (i * rowbytes);
     png_read_image (png, row_pointers);
     free(row_pointers);
     png_read_end (png, NULL);
@@ -344,7 +346,20 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
     if(displayBitmap == pnginfo_true){
       printf("Dumping the bitmap for this image:\n");
 
-      
+      runlen = 0;
+      for(i = 0; i < rowbytes * height / 3; i+=3){
+	if((runlen != 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
+	   && (bitmap[i] == 0)) runlen++;
+	else if(runlen != 0){
+	  printf("* %d ", runlen);
+	  runlen == 0;
+	}
+	
+	if(runlen == 0)
+	  printf("[%d, %d, %d] ", (unsigned char) bitmap[i],
+		 (unsigned char) bitmap[i + 1],
+		 (unsigned char) bitmap[i + 2]);
+      }
     }
   }
 
