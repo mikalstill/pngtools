@@ -5,14 +5,14 @@ FUNCTION pnginfo
 PURPOSE display information on the PNG files named
 
 SYNOPSIS START
-pnginfo [-d] [-D] <filenames>
+pnginfo [-t] [-d] [-D] <filenames>
 SYNOPSIS END
 
 DESCRIPTION START
 This command dumps information about the PNG files named on the command line. This command's output is based on the output of the <command>tiffinfo</command> command, which is part of the <command>libtiff</command> distribution. Each line output by the command represents a value that has been set within the PNG file.
 </para>
 <para>
-The <command>-d</command> command line option dumps the bitmap contained by the image to standard out, whilst the <command>-D</command> command merely checks that the image bitmap could be extracted from the file. If nothing is reported by <command>-D</command>, then there was no error.
+The <command>-t</command> command line option forces pnginfo to use <emphasis>libtiff</emphasis> <command>tiffinfo</command> style lables, instead of the more relevant png names. The <command>-d</command> command line option dumps the bitmap contained by the image to standard out, whilst the <command>-D</command> command merely checks that the image bitmap could be extracted from the file. If nothing is reported by <command>-D</command>, then there was no error.
 </para>
 <para>
 The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
@@ -21,7 +21,7 @@ DESCRIPTION END
 RETURNS Nothing
 
 EXAMPLE START
-%bash: pnginfo toucan.png basn3p02.png basn6a16.png
+%bash: pnginfo -t toucan.png basn3p02.png basn6a16.png
 toucan.png...
   Image Width: 162 Image Length: 150
   Bits/Sample: 8
@@ -75,7 +75,7 @@ DOCBOOK END
 #include <png.h>
 #include <unistd.h>
 
-void pnginfo_displayfile (char *, int, int);
+void pnginfo_displayfile (char *, int, int, int);
 void pnginfo_error (char *);
 void *pnginfo_xmalloc (size_t);
 void usage (void);
@@ -87,16 +87,21 @@ int
 main (int argc, char *argv[])
 {
   int i, optchar, extractBitmap = pnginfo_false, displayBitmap =
-    pnginfo_false;
+    pnginfo_false, tiffnames = pnginfo_false;
 
   // Initialise the argument that filenames start at
   i = 1;
 
   // Use getopt to determine what we have been asked to do
-  while ((optchar = getopt (argc, argv, "Dd")) != -1)
+  while ((optchar = getopt (argc, argv, "tDd")) != -1)
     {
       switch (optchar)
 	{
+	case 't':
+	  tiffnames = pnginfo_true;
+	  i++;
+	  break;
+
 	case 'd':
 	  displayBitmap = pnginfo_true;
 	  extractBitmap = pnginfo_true;
@@ -121,11 +126,11 @@ main (int argc, char *argv[])
 
   // For each filename that we have:
   for (; i < argc; i++)
-    pnginfo_displayfile (argv[i], extractBitmap, displayBitmap);
+    pnginfo_displayfile (argv[i], extractBitmap, displayBitmap, tiffnames);
 }
 
 void
-pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
+pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int tiffnames)
 {
   FILE *image;
   unsigned long imageBufSize, width, height, runlen;
@@ -138,7 +143,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
   png_bytepp row_pointers = NULL;
   char *bitmap;
 
-  printf ("%s...\n", filename);
+  printf ("%s%s...\n", filename, \
+	  tiffnames == pnginfo_true? " (tiffinfo compatible labels)" : "");
 
   // Open the file
   if ((image = fopen (filename, "rb")) == NULL)
@@ -179,9 +185,16 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
   ///////////////////////////////////////////////////////////////////////////
 
   printf ("  Image Width: %d Image Length: %d\n", width, height);
-  printf ("  Bits/Sample: %d\n", bitdepth);
-  printf ("  Samples/Pixel: %d\n", info->channels);
-  printf ("  Pixel Depth: %d\n", info->pixel_depth);	// Does this add value?
+  if(tiffnames == pnginfo_true){
+    printf ("  Bits/Sample: %d\n", bitdepth);
+    printf ("  Samples/Pixel: %d\n", info->channels);
+    printf ("  Pixel Depth: %d\n", info->pixel_depth);	// Does this add value?
+  }
+  else{
+    printf ("  Bitdepth (Bits/Sample): %d\n", bitdepth);
+    printf ("  Channels (Samples/Pixel): %d\n", info->channels);
+    printf ("  Pixel depth (Pixel Depth): %d\n", info->pixel_depth);	// Does this add value?
+  }
 
   // Photometric interp packs a lot of information
   printf ("  Colour Type (Photometric Interpretation): ");
@@ -340,6 +353,10 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
   // to look into this
   if (extractBitmap == pnginfo_true)
     {
+      // This will force the samples to be packed to the byte boundary
+      if(bitdepth < 8)
+	png_set_packing(png);
+
       if (colourtype == PNG_COLOR_TYPE_PALETTE)
 	png_set_expand (png);
 
@@ -361,10 +378,18 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
       if (displayBitmap == pnginfo_true)
 	{
 	  printf ("Dumping the bitmap for this image:\n");
+	  printf ("(Expanded samples result in %d bytes per sample)\n\n", 
+		  info->channels /* multiply bit size of sample in bytes*/);
 
+	  // runlen is used to stop us displaying repeated byte patterns over and over --
+	  // I display them once, and then tell you how many times it occured in the file.
+	  // This currently only applies to runs on zeros -- I should one day add an
+	  // option to extend this to runs of other values as well
 	  runlen = 0;
-	  for (i = 0; i < rowbytes * height / 3; i += 3)
+	  for (i = 0; i < rowbytes * height / info->channels; i += info->channels /* multiply bit size of sample in bytes*/)
 	    {
+	      int scount;
+
 	      if ((runlen != 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
 		  && (bitmap[i] == 0))
 		runlen++;
@@ -378,15 +403,28 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap)
 	      if ((runlen == 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
 		  && (bitmap[i] == 0))
 		{
-		  printf ("[0, 0, 0] ");
+		  printf ("[");
+		  for(scount = 0; scount < info->channels; scount++){
+		    printf("0");
+		    if(scount != info->channels - 1) printf(" ");
+		  }
+		  printf ("] ");
 		  runlen++;
 		}
 
-	      if (runlen == 0)
-		printf ("[%02x %02x %02x] ", (unsigned char) bitmap[i],
-			(unsigned char) bitmap[i + 1],
-			(unsigned char) bitmap[i + 2]);
+	      if (runlen == 0){
+		printf ("[");
+		for(scount = 0; scount < info->channels; scount++){
+		  printf("%02x", (unsigned char) bitmap[i + scount]);
+		  if(scount != info->channels - 1) printf(" ");
+		}
+		printf("] ");
+	      }
+	      
+	      // Perhaps one day a new row should imply a line break here?
 	    }
+	  
+	  printf("\n");
 	}
     }
 
