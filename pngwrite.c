@@ -38,7 +38,7 @@ int pngcp_writeimage(char *filename, unsigned long width, unsigned long height,
   if ((png =
        png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL, NULL,
                                 NULL)) == NULL){
-    fprintf(stderr, "Could not create write structure for PNG (out of memory?)");
+    fprintf(stderr, "Could not create write structure for PNG (out of memory?)\n");
     return -1;
   }
 
@@ -48,12 +48,12 @@ int pngcp_writeimage(char *filename, unsigned long width, unsigned long height,
   // Get ready to specify important stuff about the image
   if ((info = png_create_info_struct (png)) == NULL){
     fprintf(stderr,
-            "Could not create PNG info structure for writing (out of memory?)");
+            "Could not create PNG info structure for writing (out of memory?)\n");
     return -1;
   }
 
   if (setjmp (png_jmpbuf (png))){
-    fprintf(stderr, "Could not set the PNG jump value for writing");
+    fprintf(stderr, "Could not set the PNG jump value for writing\n");
     return -1;
   }
 

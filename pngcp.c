@@ -68,8 +68,7 @@ int main(int argc, char *argv[]){
 	 targetbitdepth, targetchannels, targetbytedepth);
   
   // Determine how much each sample has to be scaled by to get to the new bitdepth
-  scalefactor = (float) (pow(2.0, (double) targetbitdepth) - pow(2.0, (double) bitdepth)) / 
-    pow(2.0, (double) bitdepth);
+  scalefactor = (float) pow(2.0, (double) targetbitdepth)  / (float) pow(2.0, (double) bitdepth);
   printf("Scaling factor is %f - %f / %f = %f\n", (float) pow(2.0, (double) targetbitdepth),
 	 (float) pow(2.0, (double) bitdepth), (float) pow(2.0, (double) bitdepth), scalefactor);
 
