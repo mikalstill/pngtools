@@ -64,9 +64,10 @@ MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 
-bin_PROGRAMS = pnginfo pngcp
+bin_PROGRAMS = pnginfo pngcp pngchunkdesc
 pnginfo_SOURCES = pnginfo.c
 pngcp_SOURCES = pngcp.c
+pngchunkdesc_SOURCES = pngchunkdesc.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_CLEAN_FILES = 
@@ -85,6 +86,10 @@ pngcp_OBJECTS =  pngcp.o
 pngcp_LDADD = $(LDADD)
 pngcp_DEPENDENCIES = 
 pngcp_LDFLAGS = 
+pngchunkdesc_OBJECTS =  pngchunkdesc.o
+pngchunkdesc_LDADD = $(LDADD)
+pngchunkdesc_DEPENDENCIES = 
+pngchunkdesc_LDFLAGS = 
 CFLAGS = @CFLAGS@
 COMPILE = $(CC) $(DEFS) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
@@ -97,9 +102,9 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = gtar
 GZIP_ENV = --best
-DEP_FILES =  .deps/pngcp.P .deps/pnginfo.P
-SOURCES = $(pnginfo_SOURCES) $(pngcp_SOURCES)
-OBJECTS = $(pnginfo_OBJECTS) $(pngcp_OBJECTS)
+DEP_FILES =  .deps/pngchunkdesc.P .deps/pngcp.P .deps/pnginfo.P
+SOURCES = $(pnginfo_SOURCES) $(pngcp_SOURCES) $(pngchunkdesc_SOURCES)
+OBJECTS = $(pnginfo_OBJECTS) $(pngcp_OBJECTS) $(pngchunkdesc_OBJECTS)
 
 all: all-redirect
 .SUFFIXES:
@@ -167,6 +172,10 @@ pnginfo: $(pnginfo_OBJECTS) $(pnginfo_DEPENDENCIES)
 pngcp: $(pngcp_OBJECTS) $(pngcp_DEPENDENCIES)
 	@rm -f pngcp
 	$(LINK) $(pngcp_LDFLAGS) $(pngcp_OBJECTS) $(pngcp_LDADD) $(LIBS)
+
+pngchunkdesc: $(pngchunkdesc_OBJECTS) $(pngchunkdesc_DEPENDENCIES)
+	@rm -f pngchunkdesc
+	$(LINK) $(pngchunkdesc_LDFLAGS) $(pngchunkdesc_OBJECTS) $(pngchunkdesc_LDADD) $(LIBS)
 
 tags: TAGS
 
