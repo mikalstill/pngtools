@@ -3,6 +3,33 @@
 #include <math.h>
 #include "pngcp.h"
 
+/******************************************************************************
+DOCBOOK START
+
+FUNCTION pngcp
+PURPOSE create a new PNG file, having changed some attributes
+
+SYNOPSIS START
+pnginfo [-d <depth>] [-s <samples per pixel>] <input filename> <output filename>
+SYNOPSIS END
+
+DESCRIPTION START
+The <command>pngcp</command> create a new PNG file using the image data from the input file. The output file will have the bitdepth and number of samples per pixel as specified on the command line. There are limits on what is a valid combination imposed by the PNG specification -- <command>pngcp</command> will inform you of invalid combinations.
+</para>
+
+<para>
+Samples with more than eight bits are not correctly handled at the moment.
+DESCRIPTION END
+
+RETURNS Nothing
+
+EXAMPLE START
+%bash: pngcp toucan.png new.png
+EXAMPLE END
+SEEALSO libpng libtiff tiffcp pngchunkdesc pnginfo
+DOCBOOK END
+******************************************************************************/
+
 void usage();
 
 int main(int argc, char *argv[]){
@@ -90,6 +117,6 @@ int main(int argc, char *argv[]){
 void
 usage ()
 {
-  fprintf(stderr, "Usage: pngcp [-d] <target bitdepth> -s <target samples per pixel> <input filename> <output filename>\n");
+  fprintf(stderr, "Usage: pngcp [-d <target bitdepth>] [-s <target samples per pixel>] <input filename> <output filename>\n");
   exit(1);
 }

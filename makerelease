@@ -8,13 +8,13 @@ cd ..
 
 for item in `ls *.c`
 do
-  ~mikal/opensource/autodocbook/autodocbook $item
+  ~mikal/opensource-stable/autodocbook/autodocbook $item
 done
 
 cd man
 for item in `ls *sgml`
 do
-  /usr/local/bin/docbook-to-man $item > `echo $item | sed 's/sgml/man/'`
+  docbook2man $item > `echo $item | sed 's/sgml/man/'`
 done
 cd ..
 
@@ -29,11 +29,7 @@ do
   rm -i $item
 done
 
-# Get rid of the timetrials -- they are too big
-rm -rf timetrials
-rm -rf testdata
-
-delname="Makefile config.cache config.log config.status logfile math config.h output.pdf .deps"
+delname="Makefile autom4te.cache config.cache config.log config.status logfile math config.h output.pdf .deps"
 
 # Get rid of makefiles
 for filename in $delname

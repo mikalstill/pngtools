@@ -65,7 +65,7 @@ basn6a16.png...
   Number of text strings: 0 of 0
 
 EXAMPLE END
-SEEALSO libpng libtiff tiffinfo pngchunkdesc
+SEEALSO libpng libtiff tiffinfo pngchunkdesc pngcp
 DOCBOOK END
 ******************************************************************************/
 
