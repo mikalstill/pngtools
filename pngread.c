@@ -3,9 +3,11 @@
 #include <string.h>
 #include <png.h>
 #include <unistd.h>
-#include "pngcp.h"
 
-char *pngcp_readimage(char *filename, unsigned long *width, unsigned long *height, 
+char *readimage(char *filename, unsigned long *width, unsigned long *height, 
+		int *bitdepth, int *channels);
+
+char *readimage(char *filename, unsigned long *width, unsigned long *height, 
 		      int *bitdepth, int *channels){
   FILE *image;
   png_uint_32 i, j, rowbytes;
@@ -55,16 +57,18 @@ char *pngcp_readimage(char *filename, unsigned long *width, unsigned long *heigh
   png_read_info(png, info);
   png_get_IHDR(png, info, width, height, bitdepth, &colourtype, NULL, 
 	       NULL, NULL);
-  *channels = info->channels;
 
   if(*bitdepth < 8)
     png_set_packing(png);
-  
+
   if (colourtype == PNG_COLOR_TYPE_PALETTE)
     png_set_expand (png);
 
+  // The channels bit has to be after here, so that the number of channels within the
+  // palette is correctly reported...
   //png_set_strip_alpha (png);
   png_read_update_info (png, info);
+  *channels = info->channels;
   
   rowbytes = png_get_rowbytes (png, info);
   if((row_pointers = malloc (*height * sizeof (png_bytep))) == NULL){

@@ -65,7 +65,7 @@ int main(int argc, char *argv[]){
 
   // Colour depth is the number of bits per sample
   // Bit depth is the number of samples per pixel
-  if((input = pngcp_readimage(argv[i], &width, &height, &bitdepth, &channels)) == -1){
+  if((input = readimage(argv[i], &width, &height, &bitdepth, &channels)) == -1){
     fprintf(stderr, "Failed to read the input raster\n");
     exit(42);
   }
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]){
   }
 
   // Now push the raster into the output file
-  if(pngcp_writeimage(argv[i + 1], width, height, targetbitdepth, targetchannels, output) < 0){
+  if(writeimage(argv[i + 1], width, height, targetbitdepth, targetchannels, output) < 0){
     fprintf(stderr, "Error writing the output file\n");
     exit(42);
   }

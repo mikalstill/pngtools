@@ -384,8 +384,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	    bytespersample++;
 
 	  printf ("Dumping the bitmap for this image:\n");
-	  printf ("(Expanded samples result in %d bytes per pixel)\n\n", 
-		  info->channels * bytespersample);
+	  printf ("(Expanded samples result in %d bytes per pixel, %d channels with %d bytes per channel)\n\n", 
+		  info->channels * bytespersample, info->channels, bytespersample);
 
 	  // runlen is used to stop us displaying repeated byte patterns over and over --
 	  // I display them once, and then tell you how many times it occured in the file.
