@@ -4,7 +4,7 @@
 #include <png.h>
 #include <unistd.h>
 
-void pnginfo_displayfile(char *, int, int);
+void pnginfo_copyfile(char *, int);
 void pnginfo_error(char *);
 void *pnginfo_xmalloc(size_t);
 void usage(void);
@@ -13,18 +13,26 @@ void usage(void);
 #define pnginfo_false 0
 
 int main(int argc, char *argv[]){
-  int i, optchar, destwidth = -1;
+  int optchar, destwidth = -1;
+  char *input, *output;
 
-  // Initialise the argument that filenames start at
-  i = 1;
-  
   // Use getopt to determine what we have been asked to do
-  while((optchar = getopt(argc, argv, "w")) != -1){
-    printf("Optchar is %c\n", optchar);
+  while((optchar = getopt(argc, argv, "i:o:w:")) != -1){
+    printf("Optchar is %c [%s]\n", optchar, optarg);
 
     switch(optchar){
+    case 'i':
+      // The name of the input file
+      input = optarg;
+      break;
+
+    case 'o':
+      // The name of the outputfile
+      output = optarg;
+      break;
+
     case 'w':
-      destwidth = ztoi(optarg);
+      //destwidth = atoi(optarg);
       break;
 
     case '?':
@@ -38,12 +46,10 @@ int main(int argc, char *argv[]){
   if(argc < 2)
     usage();
 
-  // For each filename that we have:
-  for(; i < argc; i++)
-    pnginfo_displayfile(argv[i], );
+  pnginfo_copyfile(input, destwidth);
 }
 
-void pnginfo_displayfile(char *filename, int destwidth){
+void pnginfo_copyfile(char *filename, int destwidth){
   FILE *image;
   unsigned long imageBufSize, width, height, runlen;
   unsigned char signature;

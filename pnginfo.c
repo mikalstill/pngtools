@@ -91,8 +91,6 @@ int main(int argc, char *argv[]){
   
   // Use getopt to determine what we have been asked to do
   while((optchar = getopt(argc, argv, "Dd")) != -1){
-    printf("Optchar is %c\n", optchar);
-
     switch(optchar){
     case 'd':
       displayBitmap = pnginfo_true;
