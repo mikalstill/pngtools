@@ -349,7 +349,7 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
 	if((runlen != 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
 	   && (bitmap[i] == 0)) runlen++;
 	else if(runlen != 0){
-	  printf("* %d ", runlen);
+	  if(runlen > 1) printf("* %d ", runlen);
 	  runlen = 0;
 	}
 
