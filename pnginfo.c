@@ -15,7 +15,7 @@ This command dumps information about the PNG files named on the command line. Th
 The <command>-d</command> command line option dumps the bitmap contained by the image to standard out, whilst the <command>-D</command> command merely checks that the image bitmap could be extracted from the file. If nothing is reported by <command>-D</command>, then there was no error.
 </para>
 <para>
-The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance (red, green, blue). This means that paletted images et cetera will have their bitmaps expanded before display.
+The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
 DESCRIPTION END
 
 RETURNS Nothing
