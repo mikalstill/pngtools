@@ -360,7 +360,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
       if (colourtype == PNG_COLOR_TYPE_PALETTE)
 	png_set_expand (png);
 
-      png_set_strip_alpha (png);
+      // png_set_strip_alpha (png);
       png_read_update_info (png, info);
 
       rowbytes = png_get_rowbytes (png, info);
@@ -377,18 +377,24 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
       // Do we want to display this bitmap?
       if (displayBitmap == pnginfo_true)
 	{
+	  int bytespersample;
+
+	  bytespersample = bitdepth / 8;
+	  if(bitdepth % 8 != 0)
+	    bytespersample++;
+
 	  printf ("Dumping the bitmap for this image:\n");
-	  printf ("(Expanded samples result in %d bytes per sample)\n\n", 
-		  info->channels /* multiply bit size of sample in bytes*/);
+	  printf ("(Expanded samples result in %d bytes per pixel)\n\n", 
+		  info->channels * bytespersample);
 
 	  // runlen is used to stop us displaying repeated byte patterns over and over --
 	  // I display them once, and then tell you how many times it occured in the file.
 	  // This currently only applies to runs on zeros -- I should one day add an
 	  // option to extend this to runs of other values as well
 	  runlen = 0;
-	  for (i = 0; i < rowbytes * height / info->channels; i += info->channels /* multiply bit size of sample in bytes*/)
+	  for (i = 0; i < rowbytes * height / info->channels; i += info->channels * bytespersample)
 	    {
-	      int scount;
+	      int scount, bcount, pixel;
 
 	      if ((runlen != 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
 		  && (bitmap[i] == 0))
@@ -400,12 +406,17 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 		  runlen = 0;
 		}
 
-	      if ((runlen == 0) && (bitmap[i] == 0) && (bitmap[i] == 0)
-		  && (bitmap[i] == 0))
+	      // Determine if this is a pixel whose entire value is zero
+	      pixel = 0;
+	      for(scount = 0; scount < info->channels; scount++)
+		for(bcount = 0; bcount < bytespersample; bcount++)
+		  pixel += bitmap[i + scount * bytespersample + bcount];
+
+	      if ((runlen == 0) && !pixel)
 		{
 		  printf ("[");
 		  for(scount = 0; scount < info->channels; scount++){
-		    printf("0");
+		    for(bcount = 0; bcount < bytespersample; bcount++) printf("00");
 		    if(scount != info->channels - 1) printf(" ");
 		  }
 		  printf ("] ");
@@ -415,7 +426,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	      if (runlen == 0){
 		printf ("[");
 		for(scount = 0; scount < info->channels; scount++){
-		  printf("%02x", (unsigned char) bitmap[i + scount]);
+		  for(bcount = 0; bcount < bytespersample; bcount++)
+		    printf("%02x", (unsigned char) bitmap[i + scount * bytespersample + bcount]);
 		  if(scount != info->channels - 1) printf(" ");
 		}
 		printf("] ");
