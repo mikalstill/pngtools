@@ -168,8 +168,6 @@ void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
 
   ///////////////////////////////////////////////////////////////////////////
   // Start displaying information
-  //
-  // Can't fight the moonlight...
   ///////////////////////////////////////////////////////////////////////////
   
   printf("  Image Width: %d Image Length: %d\n", width, height);
