@@ -5,11 +5,17 @@ FUNCTION pnginfo
 PURPOSE display information on the PNG files named
 
 SYNOPSIS START
-pnginfo <filenames>
+pnginfo [-d] [-D] <filenames>
 SYNOPSIS END
 
 DESCRIPTION START
 This command dumps information about the PNG files named on the command line. This command's output is based on the output of the <command>tiffinfo</command> command, which is part of the <command>libtiff</command> distribution. Each line output by the command represents a value that has been set within the PNG file.
+</para>
+<para>
+The <command>-d</command> command line option dumps the bitmap contained by the image to standard out, whilst the <command>-D</command> command merely checks that the image bitmap could be extracted from the file. If nothing is reported by <command>-D</command>, then there was no error.
+</para>
+<para>
+The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance (red, green, blue). This means that paletted images et cetera will have their bitmaps expanded before display.
 DESCRIPTION END
 
 RETURNS Nothing
@@ -67,24 +73,55 @@ DOCBOOK END
 #include <stdlib.h>
 #include <string.h>
 #include <png.h>
+#include <unistd.h>
 
-void pnginfo_displayfile(char *filename);
+void pnginfo_displayfile(char *, int, int);
 void pnginfo_error(char *);
 void *pnginfo_xmalloc(size_t);
+void usage(void);
+
+#define pnginfo_true 1
+#define pnginfo_false 0
 
 int main(int argc, char *argv[]){
-  int i;
+  int i, optchar, extractBitmap = pnginfo_false, displayBitmap = pnginfo_false;
+
+  // Initialise the argument that filenames start at
+  i = 1;
+  
+  // Use getopt to determine what we have been asked to do
+  while((optchar = getopt(argc, argv, "Dd")) != -1){
+    printf("Optchar is %c\n", optchar);
+
+    switch(optchar){
+    case 'd':
+      displayBitmap = pnginfo_true;
+      extractBitmap = pnginfo_true;
+      i++;
+      break;
+
+    case 'D':
+      extractBitmap = pnginfo_true;
+      i++;
+      break;
+
+    case '?':
+    default:
+      usage();
+      break;
+    }
+  }
 
   // Determine if we were given a filename on the command line
   if(argc < 2)
-    pnginfo_error("Usage: pnginfo <filenames>");
+    usage();
 
   // For each filename that we have:
-  for(i = 1; i < argc; i++)
-    pnginfo_displayfile(argv[i]);
+  for(; i < argc; i++)
+    pnginfo_displayfile(argv[i], extractBitmap, displayBitmap);
 }
 
-void pnginfo_displayfile(char *filename){
+void pnginfo_displayfile(char *filename, int extractBitmap, int displayBitmap){
   FILE *image;
   unsigned long imageBufSize, width, height;
   unsigned char signature;
@@ -282,6 +319,35 @@ void pnginfo_displayfile(char *filename){
   // Print a blank line
   printf("\n");
 
+  // Do we want to extract the image data?
+  if(extractBitmap == pnginfo_true){
+    if (colourtype == PNG_COLOR_TYPE_PALETTE)
+      png_set_expand (png);
+
+    png_set_strip_alpha (png);
+    png_read_update_info (png, info);
+    
+    rowbytes = png_get_rowbytes (png, info);
+    imageObj->binarystream =
+      (unsigned char *) panda_xmalloc ((rowbytes * height) + 1);
+    imageObj->binarystreamLength = rowbytes * height;
+    row_pointers = panda_xmalloc (height * sizeof (png_bytep));
+    
+    // Get the image bitmap
+    for (i = 0; i < height; ++i)
+      row_pointers[i] = imageObj->binarystream + (i * rowbytes);
+    png_read_image (png, row_pointers);
+    free(row_pointers);
+    png_read_end (png, NULL);
+    
+    // Do we want to display this bitmap?
+    if(displayBitmap == pnginfo_true){
+      printf("Dumping the bitmap for this image:\n");
+
+      
+    }
+  }
+
   // This cleans things up for us in the PNG library
   fclose(image);
   png_destroy_read_struct(&png, &info, NULL);
@@ -307,4 +373,8 @@ pnginfo_xmalloc (size_t size)
     }
 
   return buffer;
+}
+
+void usage(){
+  pnginfo_error("Usage: pnginfo [-d] [-D] <filenames>");
 }
