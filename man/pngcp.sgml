@@ -1,0 +1,82 @@
+<!-- 
+
+     This document is part of the pngtools distribution, and is covered
+     by the GNU GPL, a copy of which is in the file named COPYING inside the
+     distribution.
+
+     This program and it's documentation are distributed in the hope that 
+     they will be useful,but WITHOUT ANY WARRANTY; without even the implied 
+     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     (c) Michael Still, 2001
+-->
+
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook SGML V4.4//EN"
+   "http://www.oasis-open.org/docbook/sgml/4.4/docbook.dtd">
+<refentry id="pngcp">
+<refmeta>
+<refentrytitle>pngcp</refentrytitle>
+<manvolnum>3</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>pngcp</refname>
+<refpurpose>create a new PNG file, having changed some attributes</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>
+ pnginfo [-d &lt;depth&gt;] [-s &lt;samples per pixel&gt;] &lt;input filename&gt; &lt;output filename&gt;
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>DESCRIPTION</title>
+<para> The &lt;command&gt;pngcp&lt;/command&gt; create a new PNG file using the image data from the input file. The output file will have the bitdepth and number of samples per pixel as specified on the command line. There are limits on what is a valid combination imposed by the PNG specification -- &lt;command&gt;pngcp&lt;/command&gt; will inform you of invalid combinations.
+ &lt;/para&gt;
+ &lt;para&gt;
+ Samples with more than eight bits are not correctly handled at the moment.
+</para>
+</refsect1>
+
+<refsect1>
+<title>RETURNS</title>
+<para>Nothing</para>
+</refsect1>
+
+<refsect1>
+<title>EXAMPLE</title>
+<programlisting>
+ %bash: pngcp toucan.png new.png
+</programlisting>
+</refsect1>
+
+<refsect1>
+<title>SEE ALSO</title>
+<para>libpng libtiff tiffcp pngchunkdesc pnginfo</para>
+</refsect1>
+
+
+<refsect1>
+    <title>VERSION</title>
+    <para>
+This documentation was generated for <command>pngtools</command> 0.2 by <command>autodocbook</command> (http://www.stillhq.com).
+    </para>
+</refsect1>
+
+<refsect1>
+    <title>AUTHOR</title>
+    <para>
+<command>pngtools</command> is under development by Michael Still (mikal@stillhq.com). All code is Copyright Michael Still 2001 to 2003,  and is released under the GNU GPL. Code submissions are welcomed. Contact Michael at the address above if you have something you would like to contribute.
+</para>
+</refsect1>
+
+<refsect1>
+    <title>BUGS</title>
+    <para>
+There  are no known bugs in <command>pngtools</command>. If you find one, please contact mikal@stillhq.com and let me know.
+</para>
+</refsect1>
+</refentry>

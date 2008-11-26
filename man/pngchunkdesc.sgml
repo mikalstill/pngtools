@@ -1,0 +1,70 @@
+<!-- 
+
+     This document is part of the pngtools distribution, and is covered
+     by the GNU GPL, a copy of which is in the file named COPYING inside the
+     distribution.
+
+     This program and it's documentation are distributed in the hope that 
+     they will be useful,but WITHOUT ANY WARRANTY; without even the implied 
+     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     (c) Michael Still, 2001
+-->
+
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook SGML V4.4//EN"
+   "http://www.oasis-open.org/docbook/sgml/4.4/docbook.dtd">
+<refentry id="pngchunkdesc">
+<refmeta>
+<refentrytitle>pngchunkdesc</refentrytitle>
+<manvolnum>3</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>pngchunkdesc</refname>
+<refpurpose>decode information embedded into a PNG chunk name</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>
+ pngchunkdesc
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>DESCRIPTION</title>
+<para> PNGfiles are based around a series of chunks, which embody the information stored in the image file. These chunks have four character ASCII names, where the case of each letter stores additional information.
+ &lt;/para&gt;
+ &lt;para&gt;
+ This program decodes the case information in the chunk names, and displays it. The program reads chunk names from stdin, and write chunk descriptions to stdout.
+</para>
+</refsect1>
+
+<refsect1>
+<title>SEE ALSO</title>
+<para>libpng libtiff tiffinfo pnginfo</para>
+</refsect1>
+
+
+<refsect1>
+    <title>VERSION</title>
+    <para>
+This documentation was generated for <command>pngtools</command> 0.2 by <command>autodocbook</command> (http://www.stillhq.com).
+    </para>
+</refsect1>
+
+<refsect1>
+    <title>AUTHOR</title>
+    <para>
+<command>pngtools</command> is under development by Michael Still (mikal@stillhq.com). All code is Copyright Michael Still 2001 to 2003,  and is released under the GNU GPL. Code submissions are welcomed. Contact Michael at the address above if you have something you would like to contribute.
+</para>
+</refsect1>
+
+<refsect1>
+    <title>BUGS</title>
+    <para>
+There  are no known bugs in <command>pngtools</command>. If you find one, please contact mikal@stillhq.com and let me know.
+</para>
+</refsect1>
+</refentry>

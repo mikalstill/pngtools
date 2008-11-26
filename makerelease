@@ -1,20 +1,20 @@
-#!/bin/bash
+#!/bin/bash -e
 
 # This script makes the world nice-looking for the world.
 
 cd man
-rm *sgml
+rm *sgml || true
 cd ..
 
 for item in `ls *.c`
 do
-  ~mikal/opensource-stable/autodocbook/autodocbook $item
+  /data/src/stillhq_public/trunk/autodocbook/autodocbook $item
 done
 
 cd man
 for item in `ls *sgml`
 do
-  docbook2man $item > `echo $item | sed 's/sgml/man/'`
+  docbook2man $item
 done
 cd ..
 
@@ -29,19 +29,17 @@ do
   rm -i $item
 done
 
-delname="Makefile autom4te.cache config.cache config.log config.status logfile math config.h output.pdf .deps"
-
 # Get rid of unwanted files
-for filename in $delname
+for filename in Makefile autom4te.cache config.cache config.log config.status logfile math config.h output.pdf .deps
 do
   for item in `find . -name $filename -print`
   do
-    rm -ri $item
+    rm -rf $item || true
   done
 done
 
-rm -ri "#*#"
-rm -ri *~
+rm -ri "#*#" || true
+rm -ri *~ || true
 
 # How much space do we use?
 du -sk

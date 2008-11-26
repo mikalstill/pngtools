@@ -14,10 +14,9 @@ void usage();
 const char magic[] = {137, 'P', 'N', 'G', '\r', '\n', 26, '\n'};
 typedef struct pngchunks_internal_header
 {
-  // We are assuming here that ints are 4 bytes...
-  unsigned int len;
+  int32_t len;
   union{
-    unsigned int i;
+    int32_t i;
     char c[4];
   } type;
 } pngchunks_header;
@@ -31,8 +30,8 @@ char *meanings[4][2] = {
 
 typedef struct pngchunks_internal_IHDR
 {
-  int width;
-  int height;
+  int32_t width;
+  int32_t height;
   unsigned char bitdepth;
   unsigned char colortype;
   unsigned char compression;
@@ -46,12 +45,6 @@ int main(int argc, char *argv[])
   int fd, lastchunk;
   struct stat stat;
   pngchunks_header *head;
-
-  if((sizeof(int) != 4) || (sizeof(long) != 4))
-    {
-      fprintf(stderr, "Int or long is not the assumed four byte size...\n");
-      exit(1);
-    }
 
   if(argc != 2)
     usage();

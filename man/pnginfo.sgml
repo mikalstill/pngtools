@@ -1,0 +1,124 @@
+<!-- 
+
+     This document is part of the pngtools distribution, and is covered
+     by the GNU GPL, a copy of which is in the file named COPYING inside the
+     distribution.
+
+     This program and it's documentation are distributed in the hope that 
+     they will be useful,but WITHOUT ANY WARRANTY; without even the implied 
+     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     (c) Michael Still, 2001
+-->
+
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook SGML V4.4//EN"
+   "http://www.oasis-open.org/docbook/sgml/4.4/docbook.dtd">
+<refentry id="pnginfo">
+<refmeta>
+<refentrytitle>pnginfo</refentrytitle>
+<manvolnum>3</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>pnginfo</refname>
+<refpurpose>display information on the PNG files named</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>
+ pnginfo [-t] [-d] [-D] &lt;filenames&gt;
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>DESCRIPTION</title>
+<para> This command dumps information about the PNG files named on the command line. This command's output is based on the output of the &lt;command&gt;tiffinfo&lt;/command&gt; command, which is part of the &lt;command&gt;libtiff&lt;/command&gt; distribution. Each line output by the command represents a value that has been set within the PNG file.
+ &lt;/para&gt;
+ &lt;para&gt;
+ The &lt;command&gt;-t&lt;/command&gt; command line option forces pnginfo to use &lt;emphasis&gt;libtiff&lt;/emphasis&gt; &lt;command&gt;tiffinfo&lt;/command&gt; style lables, instead of the more relevant png names. The &lt;command&gt;-d&lt;/command&gt; command line option dumps the bitmap contained by the image to standard out, whilst the &lt;command&gt;-D&lt;/command&gt; command merely checks that the image bitmap could be extracted from the file. If nothing is reported by &lt;command&gt;-D&lt;/command&gt;, then there was no error.
+ &lt;/para&gt;
+ &lt;para&gt;
+ The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
+</para>
+</refsect1>
+
+<refsect1>
+<title>RETURNS</title>
+<para>Nothing</para>
+</refsect1>
+
+<refsect1>
+<title>EXAMPLE</title>
+<programlisting>
+ %bash: pnginfo -t toucan.png basn3p02.png basn6a16.png
+ toucan.png...
+ Image Width: 162 Image Length: 150
+ Bits/Sample: 8
+ Samples/Pixel: 1
+ Pixel Depth: 8
+ Colour Type (Photometric Interpretation): PALETTED COLOUR with alpha (256 colours, 256 transparent) 
+ Image filter: Single row per byte filter 
+ Interlacing: Adam7 interlacing 
+ Compression Scheme: Deflate method 8, 32k window
+ Resolution: 0, 0 (unit unknown)
+ FillOrder: msb-to-lsb
+ Byte Order: Network (Big Endian)
+ Number of text strings: 0 of 0
+ basn3p02.png...
+ Image Width: 32 Image Length: 32
+ Bits/Sample: 2
+ Samples/Pixel: 1
+ Pixel Depth: 2
+ Colour Type (Photometric Interpretation): PALETTED COLOUR (4 colours, 0 transparent) 
+ Image filter: Single row per byte filter 
+ Interlacing: No interlacing 
+ Compression Scheme: Deflate method 8, 32k window
+ Resolution: 0, 0 (unit unknown)
+ FillOrder: msb-to-lsb
+ Byte Order: Network (Big Endian)
+ Number of text strings: 0 of 0
+ basn6a16.png...
+ Image Width: 32 Image Length: 32
+ Bits/Sample: 16
+ Samples/Pixel: 4
+ Pixel Depth: 64
+ Colour Type (Photometric Interpretation): RGB with alpha channel 
+ Image filter: Single row per byte filter 
+ Interlacing: No interlacing 
+ Compression Scheme: Deflate method 8, 32k window
+ Resolution: 0, 0 (unit unknown)
+ FillOrder: msb-to-lsb
+ Byte Order: Network (Big Endian)
+ Number of text strings: 0 of 0
+</programlisting>
+</refsect1>
+
+<refsect1>
+<title>SEE ALSO</title>
+<para>libpng libtiff tiffinfo pngchunkdesc pngcp</para>
+</refsect1>
+
+
+<refsect1>
+    <title>VERSION</title>
+    <para>
+This documentation was generated for <command>pngtools</command> 0.2 by <command>autodocbook</command> (http://www.stillhq.com).
+    </para>
+</refsect1>
+
+<refsect1>
+    <title>AUTHOR</title>
+    <para>
+<command>pngtools</command> is under development by Michael Still (mikal@stillhq.com). All code is Copyright Michael Still 2001 to 2003,  and is released under the GNU GPL. Code submissions are welcomed. Contact Michael at the address above if you have something you would like to contribute.
+</para>
+</refsect1>
+
+<refsect1>
+    <title>BUGS</title>
+    <para>
+There  are no known bugs in <command>pngtools</command>. If you find one, please contact mikal@stillhq.com and let me know.
+</para>
+</refsect1>
+</refentry>
