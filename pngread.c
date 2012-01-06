@@ -26,7 +26,7 @@ char *readimage(char *filename, unsigned long *width, unsigned long *height,
 
   // Check that it really is a PNG file
   fread(sig, 1, 8, image);
-  if(!png_check_sig(sig, 8)){
+  if(!png_sig_cmp(sig, 0, 8) == 0){
     fprintf(stderr, "This file is not a valid PNG file\n");
     goto error;
   }
@@ -68,7 +68,7 @@ char *readimage(char *filename, unsigned long *width, unsigned long *height,
   // palette is correctly reported...
   //png_set_strip_alpha (png);
   png_read_update_info (png, info);
-  *channels = info->channels;
+  *channels = png_get_channels(png, info);
   
   rowbytes = png_get_rowbytes (png, info);
   if((row_pointers = malloc (*height * sizeof (png_bytep))) == NULL){

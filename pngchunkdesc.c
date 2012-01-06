@@ -20,6 +20,7 @@ DOCBOOK END
 ******************************************************************************/
 
 #include <stdio.h>
+#include <string.h>
 
 char *meanings[4][2] = {
   {"Critical", "Ancillary"},

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 // Inflate a raster to a given pixel sample size
 char *inflateraster(char *input, unsigned long width, unsigned long height, 

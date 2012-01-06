@@ -1,6 +1,7 @@
 // List the chunks which appear in a given PNG image
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/types.h>

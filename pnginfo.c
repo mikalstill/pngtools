@@ -152,7 +152,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
   // Check that it really is a PNG file
   fread (sig, 1, 8, image);
-  if (!png_check_sig (sig, 8))
+  if (!png_sig_cmp(sig, 0, 8) == 0)
     {
       printf ("  This file is not a valid PNG file\n");
       fclose (image);
@@ -185,19 +185,24 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   ///////////////////////////////////////////////////////////////////////////
 
   printf ("  Image Width: %d Image Length: %d\n", width, height);
+  int pixel_depth;
+  pixel_depth = bitdepth * png_get_channels(png, info);
   if(tiffnames == pnginfo_true){
     printf ("  Bits/Sample: %d\n", bitdepth);
-    printf ("  Samples/Pixel: %d\n", info->channels);
-    printf ("  Pixel Depth: %d\n", info->pixel_depth);	// Does this add value?
+    printf ("  Samples/Pixel: %d\n", png_get_channels(png, info));
+    printf ("  Pixel Depth: %d\n", pixel_depth);	// Does this add value?
   }
   else{
     printf ("  Bitdepth (Bits/Sample): %d\n", bitdepth);
-    printf ("  Channels (Samples/Pixel): %d\n", info->channels);
-    printf ("  Pixel depth (Pixel Depth): %d\n", info->pixel_depth);	// Does this add value?
+    printf ("  Channels (Samples/Pixel): %d\n", png_get_channels(png, info));
+    printf ("  Pixel depth (Pixel Depth): %d\n", pixel_depth);	// Does this add value?
   }
 
   // Photometric interp packs a lot of information
   printf ("  Colour Type (Photometric Interpretation): ");
+
+  int num_palette;
+  int num_trans;
 
   switch (colourtype)
     {
@@ -207,10 +212,10 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
     case PNG_COLOR_TYPE_PALETTE:
       printf ("PALETTED COLOUR ");
-      if (info->num_trans > 0)
+      if (num_trans > 0)
 	printf ("with alpha ");
       printf ("(%d colours, %d transparent) ",
-	      info->num_palette, info->num_trans);
+	      num_palette, num_trans);
       break;
 
     case PNG_COLOR_TYPE_RGB:
@@ -232,7 +237,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("\n");
 
   printf ("  Image filter: ");
-  switch (info->filter_type)
+  switch (png_get_filter_type(png, info))
     {
     case PNG_FILTER_TYPE_BASE:
       printf ("Single row per byte filter ");
@@ -249,7 +254,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("\n");
 
   printf ("  Interlacing: ");
-  switch (info->interlace_type)
+  switch (png_get_interlace_type(png, info))
     {
     case PNG_INTERLACE_NONE:
       printf ("No interlacing ");
@@ -266,7 +271,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("\n");
 
   printf ("  Compression Scheme: ");
-  switch (info->compression_type)
+  switch (png_get_compression_type(png, info))
     {
     case PNG_COMPRESSION_TYPE_BASE:
       printf ("Deflate method 8, 32k window");
@@ -278,9 +283,13 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
     }
   printf ("\n");
 
+  png_uint_32 x_pixels_per_unit, y_pixels_per_unit;
+  int phys_unit_type;
+  png_get_pHYs (png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type);
+
   printf ("  Resolution: %d, %d ",
-	  info->x_pixels_per_unit, info->y_pixels_per_unit);
-  switch (info->phys_unit_type)
+	  x_pixels_per_unit, y_pixels_per_unit);
+  switch (phys_unit_type)
     {
     case PNG_RESOLUTION_UNKNOWN:
       printf ("(unit unknown)");
@@ -299,15 +308,18 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // FillOrder is always msb-to-lsb, big endian
   printf ("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
 
+  png_textp text;
+  int num_text, max_text;
+
   // Text comments
   printf ("  Number of text strings: %d of %d\n",
-	  info->num_text, info->max_text);
+	  num_text, max_text);
 
-  for (i = 0; i < info->num_text; i++)
+  for (i = 0; i < num_text; i++)
     {
-      printf ("    %s ", info->text[i].key);
+      printf ("    %s ", text[i].key);
 
-      switch (info->text[1].compression)
+      switch (text[1].compression)
 	{
 	case -1:
 	  printf ("(tEXt uncompressed)");
@@ -332,12 +344,12 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
       printf (": ");
       j = 0;
-      while (info->text[i].text[j] != '\0')
+      while (text[i].text[j] != '\0')
 	{
-	  if (info->text[i].text[j] == '\n')
+	  if (text[i].text[j] == '\n')
 	    printf ("\\n");
 	  else
-	    fputc (info->text[i].text[j], stdout);
+	    fputc (text[i].text[j], stdout);
 
 	  j++;
 	}
@@ -385,14 +397,14 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
 	  printf ("Dumping the bitmap for this image:\n");
 	  printf ("(Expanded samples result in %d bytes per pixel, %d channels with %d bytes per channel)\n\n", 
-		  info->channels * bytespersample, info->channels, bytespersample);
+		  png_get_channels(png, info) * bytespersample, png_get_channels(png, info), bytespersample);
 
 	  // runlen is used to stop us displaying repeated byte patterns over and over --
 	  // I display them once, and then tell you how many times it occured in the file.
 	  // This currently only applies to runs on zeros -- I should one day add an
 	  // option to extend this to runs of other values as well
 	  runlen = 0;
-	  for (i = 0; i < rowbytes * height / info->channels; i += info->channels * bytespersample)
+	  for (i = 0; i < rowbytes * height / png_get_channels(png, info); i += png_get_channels(png, info) * bytespersample)
 	    {
 	      int scount, bcount, pixel;
 
@@ -408,16 +420,16 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
 	      // Determine if this is a pixel whose entire value is zero
 	      pixel = 0;
-	      for(scount = 0; scount < info->channels; scount++)
+	      for(scount = 0; scount < png_get_channels(png, info); scount++)
 		for(bcount = 0; bcount < bytespersample; bcount++)
 		  pixel += bitmap[i + scount * bytespersample + bcount];
 
 	      if ((runlen == 0) && !pixel)
 		{
 		  printf ("[");
-		  for(scount = 0; scount < info->channels; scount++){
+		  for(scount = 0; scount < png_get_channels(png, info); scount++){
 		    for(bcount = 0; bcount < bytespersample; bcount++) printf("00");
-		    if(scount != info->channels - 1) printf(" ");
+		    if(scount != png_get_channels(png, info) - 1) printf(" ");
 		  }
 		  printf ("] ");
 		  runlen++;
@@ -425,10 +437,10 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
 	      if (runlen == 0){
 		printf ("[");
-		for(scount = 0; scount < info->channels; scount++){
+		for(scount = 0; scount < png_get_channels(png, info); scount++){
 		  for(bcount = 0; bcount < bytespersample; bcount++)
 		    printf("%02x", (unsigned char) bitmap[i + scount * bytespersample + bcount]);
-		  if(scount != info->channels - 1) printf(" ");
+		  if(scount != png_get_channels(png, info) - 1) printf(" ");
 		}
 		printf("] ");
 	      }
