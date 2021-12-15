@@ -34,12 +34,12 @@
 
 <refsect1>
 <title>DESCRIPTION</title>
-<para> This command dumps information about the PNG files named on the command line. This command's output is based on the output of the &lt;command&gt;tiffinfo&lt;/command&gt; command, which is part of the &lt;command&gt;libtiff&lt;/command&gt; distribution. Each line output by the command represents a value that has been set within the PNG file.
- &lt;/para&gt;
- &lt;para&gt;
- The &lt;command&gt;-t&lt;/command&gt; command line option forces pnginfo to use &lt;emphasis&gt;libtiff&lt;/emphasis&gt; &lt;command&gt;tiffinfo&lt;/command&gt; style labels, instead of the more relevant png names. The &lt;command&gt;-d&lt;/command&gt; command line option dumps the bitmap contained by the image to standard out, whilst the &lt;command&gt;-D&lt;/command&gt; command merely checks that the image bitmap could be extracted from the file. If nothing is reported by &lt;command&gt;-D&lt;/command&gt;, then there was no error.
- &lt;/para&gt;
- &lt;para&gt;
+<para> This command dumps information about the PNG files named on the command line. This command's output is based on the output of the <command>tiffinfo</command> command, which is part of the <command>libtiff</command> distribution. Each line output by the command represents a value that has been set within the PNG file.
+ </para>
+ <para>
+ The <command>-t</command> command line option forces pnginfo to use <emphasis>libtiff</emphasis> <command>tiffinfo</command> style labels, instead of the more relevant png names. The <command>-d</command> command line option dumps the bitmap contained by the image to standard out, whilst the <command>-D</command> command merely checks that the image bitmap could be extracted from the file. If nothing is reported by <command>-D</command>, then there was no error.
+ </para>
+ <para>
  The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
 </para>
 </refsect1>
@@ -53,8 +53,7 @@
 <refsect1>
 <title>EXAMPLE</title>
 <programlisting>
- %bash: pnginfo -t toucan.png basn3p02.png basn6a16.png
- toucan.png...
+pnginfo -t toucan.png basn3p02.png basn6a16.png toucan.png...
  Image Width: 162 Image Length: 150
  Bits/Sample: 8
  Samples/Pixel: 1
@@ -67,7 +66,8 @@
  FillOrder: msb-to-lsb
  Byte Order: Network (Big Endian)
  Number of text strings: 0 of 0
- basn3p02.png...
+
+basn3p02.png...
  Image Width: 32 Image Length: 32
  Bits/Sample: 2
  Samples/Pixel: 1
@@ -80,7 +80,8 @@
  FillOrder: msb-to-lsb
  Byte Order: Network (Big Endian)
  Number of text strings: 0 of 0
- basn6a16.png...
+
+basn6a16.png...
  Image Width: 32 Image Length: 32
  Bits/Sample: 16
  Samples/Pixel: 4
@@ -98,7 +99,7 @@
 
 <refsect1>
 <title>SEE ALSO</title>
-<para>libpng libtiff tiffinfo pngchunkdesc pngcp</para>
+<para>tiffinfo(1) pngchunkdesc(1) pngcp(1)</para>
 </refsect1>
 
 
