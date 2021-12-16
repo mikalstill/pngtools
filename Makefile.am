@@ -6,4 +6,4 @@ pngchunkdesc_SOURCES = pngchunkdesc.c
 pngchunks_SOURCES = pngchunks.c
 
 pnginfo_LDADD = -lpng
-pngcp_LDADD = -lpng
+pngcp_LDADD = -lpng -lm
