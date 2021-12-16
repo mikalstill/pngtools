@@ -4,10 +4,10 @@
 #include <png.h>
 #include <unistd.h>
 
-char *readimage(char *filename, unsigned long *width, unsigned long *height, 
+char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
 		int *bitdepth, int *channels);
 
-char *readimage(char *filename, unsigned long *width, unsigned long *height, 
+char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
 		      int *bitdepth, int *channels){
   FILE *image;
   png_uint_32 i, j, rowbytes;
