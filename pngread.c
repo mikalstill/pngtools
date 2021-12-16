@@ -90,7 +90,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 
  error:
   free(raster);
-  raster = (char *) -1;
+  raster = NULL;
 
  cleanup:
   if(row_pointers != NULL) free(row_pointers);
