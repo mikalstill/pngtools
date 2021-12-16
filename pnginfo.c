@@ -309,11 +309,12 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
 
   png_textp text;
-  int num_text, max_text;
+  int num_text;
+  num_text=png_get_text(png,info,&text,NULL);
 
   // Text comments
-  printf ("  Number of text strings: %d of %d\n",
-	  num_text, max_text);
+  printf ("  Number of text strings: %d\n",
+	  num_text);
 
   for (i = 0; i < num_text; i++)
     {
