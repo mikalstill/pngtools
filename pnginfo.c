@@ -406,7 +406,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	  // This currently only applies to runs on zeros -- I should one day add an
 	  // option to extend this to runs of other values as well
 	  runlen = 0;
-	  for (i = 0; i < rowbytes * height / png_get_channels(png, info); i += png_get_channels(png, info) * bytespersample)
+	  for (i = 0; i < rowbytes * height; i += png_get_channels(png, info) * bytespersample)
 	    {
 	      int scount, bcount, pixel;
 
