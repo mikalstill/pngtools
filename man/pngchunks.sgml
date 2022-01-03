@@ -1,0 +1,101 @@
+<!-- 
+
+     This document is part of the pngtools distribution, and is covered
+     by the GNU GPL, a copy of which is in the file named COPYING inside the
+     distribution.
+
+     This program and it's documentation are distributed in the hope that 
+     they will be useful,but WITHOUT ANY WARRANTY; without even the implied 
+     warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     (c) Michael Still, 2001
+-->
+
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook SGML V4.4//EN"
+   "http://www.oasis-open.org/docbook/sgml/4.4/docbook.dtd">
+<refentry id="pngchunkdesc">
+<refmeta>
+<refentrytitle>pngchunks</refentrytitle>
+<manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refname>pngchunks</refname>
+<refpurpose>print information embedded into a PNG file</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+<synopsis>
+ pngchunks
+
+</synopsis>
+</refsynopsisdiv>
+
+<refsect1>
+<title>DESCRIPTION</title>
+<para>pngchunks is a program that displays informations from files created according to the Portable Network Graphics file format.</para>
+</refsect1>
+
+<refsect1>
+<title>EXAMPLE</title>
+<screen>
+       pngchunks input.png Chunk: Data Length 13 (max 2147483647), Type 1380206665 [IHDR]
+         Critical, public, PNG 1.2 compliant, unsafe to copy
+         IHDR Width: 256
+         IHDR Height: 256
+         IHDR Bitdepth: 8
+         IHDR Colortype: 2
+         IHDR Compression: 0
+         IHDR Filter: 0
+         IHDR Interlace: 0
+         IHDR Compression algorithm is Deflate
+         IHDR Filter method is type zero (None, Sub, Up, Average, Paeth)
+         IHDR Interlacing is disabled
+         Chunk CRC: -753909967 Chunk: Data Length 6 (max 2147483647), Type 1145523042 [bKGD]
+         Ancillary, public, PNG 1.2 compliant, unsafe to copy
+         ... Unknown chunk type
+         Chunk CRC: 554438993 Chunk: Data Length 9 (max 2147483647), Type 1935231088 [pHYs]
+         Ancillary, public, PNG 1.2 compliant, safe to copy
+         ... Unknown chunk type
+         Chunk CRC: -757235972 Chunk: Data Length 7 (max 2147483647), Type 1162692980 [tIME]
+         Ancillary, public, PNG 1.2 compliant, unsafe to copy
+         ... Unknown chunk type
+         Chunk CRC: 429243611 Chunk: Data Length 831 (max 2147483647), Type 1413563465 [IDAT]
+         Critical, public, PNG 1.2 compliant, unsafe to copy
+         IDAT contains image data
+         Chunk CRC: 1406256926 Chunk: Data Length 0 (max 2147483647), Type 1145980233 [IEND]
+         Critical, public, PNG 1.2 compliant, unsafe to copy
+         IEND contains no data
+         Chunk CRC: -1371381630
+</screen>
+</refsect1>
+
+
+<refsect1>
+<title>SEE ALSO</title>
+<para>pngchunkdesc(1), pngcp(1), pnginfo(1).</para>
+</refsect1>
+
+
+<refsect1>
+    <title>VERSION</title>
+    <para>
+This documentation was generated for <command>pngtools</command> 0.2 by <command>autodocbook</command> (http://www.stillhq.com).
+    </para>
+</refsect1>
+
+<refsect1>
+    <title>AUTHOR</title>
+    <para>
+<command>pngtools</command> is under development by Michael Still (mikal@stillhq.com). All code is Copyright Michael Still 2001 to 2003,  and is released under the GNU GPL. Code submissions are welcomed. Contact Michael at the address above if you have something you would like to contribute.
+</para>
+</refsect1>
+
+<refsect1>
+    <title>BUGS</title>
+    <para>
+There  are no known bugs in <command>pngtools</command>. If you find one, please contact mikal@stillhq.com and let me know.
+</para>
+</refsect1>
+</refentry>
