@@ -46,7 +46,8 @@
 
 <refsect1>
 <title>RETURNS</title>
-<para>Nothing</para>
+<para>0 success</para>
+<para>1 error</para>
 </refsect1>
 
 <refsect1>
