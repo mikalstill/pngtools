@@ -35,15 +35,15 @@
 <refsect1>
 <title>DESCRIPTION</title>
 <para> PNGfiles are based around a series of chunks, which embody the information stored in the image file. These chunks have four character ASCII names, where the case of each letter stores additional information.
- &lt;/para&gt;
- &lt;para&gt;
+ </para>
+ <para>
  This program decodes the case information in the chunk names, and displays it. The program reads chunk names from stdin, and write chunk descriptions to stdout.
 </para>
 </refsect1>
 
 <refsect1>
 <title>SEE ALSO</title>
-<para>libpng libtiff tiffinfo pnginfo</para>
+<para>tiffinfo(1) pnginfo(1)</para>
 </refsect1>
 
 

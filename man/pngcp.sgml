@@ -27,16 +27,16 @@
 
 <refsynopsisdiv>
 <synopsis>
- pnginfo [-d &lt;depth&gt;] [-s &lt;samples per pixel&gt;] &lt;input filename&gt; &lt;output filename&gt;
+ pngcp [-d &lt;depth&gt;] [-s &lt;samples per pixel&gt;] &lt;input filename&gt; &lt;output filename&gt;
 
 </synopsis>
 </refsynopsisdiv>
 
 <refsect1>
 <title>DESCRIPTION</title>
-<para> The &lt;command&gt;pngcp&lt;/command&gt; create a new PNG file using the image data from the input file. The output file will have the bitdepth and number of samples per pixel as specified on the command line. There are limits on what is a valid combination imposed by the PNG specification -- &lt;command&gt;pngcp&lt;/command&gt; will inform you of invalid combinations.
- &lt;/para&gt;
- &lt;para&gt;
+<para> The <command>pngcp</command> create a new PNG file using the image data from the input file. The output file will have the bitdepth and number of samples per pixel as specified on the command line. There are limits on what is a valid combination imposed by the PNG specification -- <command>pngcp</command> will inform you of invalid combinations.
+ </para>
+ <para>
  Samples with more than eight bits are not correctly handled at the moment.
 </para>
 </refsect1>
@@ -49,13 +49,13 @@
 <refsect1>
 <title>EXAMPLE</title>
 <programlisting>
- %bash: pngcp toucan.png new.png
+pngcp toucan.png new.png
 </programlisting>
 </refsect1>
 
 <refsect1>
 <title>SEE ALSO</title>
-<para>libpng libtiff tiffcp pngchunkdesc pnginfo</para>
+<para>tiffcp(1) pngchunkdesc(1) pnginfo(1)</para>
 </refsect1>
 
 
