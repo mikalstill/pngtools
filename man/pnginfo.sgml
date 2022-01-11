@@ -37,7 +37,7 @@
 <para> This command dumps information about the PNG files named on the command line. This command's output is based on the output of the &lt;command&gt;tiffinfo&lt;/command&gt; command, which is part of the &lt;command&gt;libtiff&lt;/command&gt; distribution. Each line output by the command represents a value that has been set within the PNG file.
  &lt;/para&gt;
  &lt;para&gt;
- The &lt;command&gt;-t&lt;/command&gt; command line option forces pnginfo to use &lt;emphasis&gt;libtiff&lt;/emphasis&gt; &lt;command&gt;tiffinfo&lt;/command&gt; style lables, instead of the more relevant png names. The &lt;command&gt;-d&lt;/command&gt; command line option dumps the bitmap contained by the image to standard out, whilst the &lt;command&gt;-D&lt;/command&gt; command merely checks that the image bitmap could be extracted from the file. If nothing is reported by &lt;command&gt;-D&lt;/command&gt;, then there was no error.
+ The &lt;command&gt;-t&lt;/command&gt; command line option forces pnginfo to use &lt;emphasis&gt;libtiff&lt;/emphasis&gt; &lt;command&gt;tiffinfo&lt;/command&gt; style labels, instead of the more relevant png names. The &lt;command&gt;-d&lt;/command&gt; command line option dumps the bitmap contained by the image to standard out, whilst the &lt;command&gt;-D&lt;/command&gt; command merely checks that the image bitmap could be extracted from the file. If nothing is reported by &lt;command&gt;-D&lt;/command&gt;, then there was no error.
  &lt;/para&gt;
  &lt;para&gt;
  The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
