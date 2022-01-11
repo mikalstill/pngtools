@@ -18,7 +18,9 @@ The <command>-t</command> command line option forces pnginfo to use <emphasis>li
 The format for the output bitmaps is hexadecimal, with each pixel presented as a triple -- for instance [red green blue]. This means that paletted images et cetera will have their bitmaps expanded before display.
 DESCRIPTION END
 
-RETURNS Nothing
+RETURNS 
+  0 success
+  1 error
 
 EXAMPLE START
 %bash: pnginfo -t toucan.png basn3p02.png basn6a16.png
@@ -127,6 +129,8 @@ main (int argc, char *argv[])
   // For each filename that we have:
   for (; i < argc; i++)
     pnginfo_displayfile (argv[i], extractBitmap, displayBitmap, tiffnames);
+    
+  return 0;
 }
 
 void
@@ -154,11 +158,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // Check that it really is a PNG file
   fread (sig, 1, 8, image);
   if (!png_sig_cmp(sig, 0, 8) == 0)
-    {
-      printf ("  This file is not a valid PNG file\n");
-      fclose (image);
-      return;
-    }
+    pnginfo_error ("This file is not a valid PNG file.");
 
   // Start decompressing
   if ((png = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL,
@@ -465,7 +465,7 @@ void
 pnginfo_error (char *message)
 {
   fprintf (stderr, "%s\n", message);
-  exit (42);
+  exit (1);
 }
 
 // Allocate some memory
