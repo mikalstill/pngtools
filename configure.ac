@@ -34,4 +34,5 @@ dnl Checks for library functions.
 AC_FUNC_VPRINTF
 dnl AC_FUNC_SNPRINTF
 
-AC_OUTPUT(Makefile)
+AC_CONFIG_FILES([Makefile man/Makefile])
+AC_OUTPUT
