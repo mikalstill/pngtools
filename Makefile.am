@@ -1,3 +1,5 @@
+SUBDIRS = man
+
 bin_PROGRAMS = pnginfo pngcp pngchunkdesc pngchunks
 
 pnginfo_SOURCES = pnginfo.c
