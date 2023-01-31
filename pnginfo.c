@@ -416,7 +416,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	      else if (runlen != 0)
 		{
 		  if (runlen > 1)
-		    printf ("* %d ", runlen);
+		    printf ("* %ld ", runlen);
 		  runlen = 0;
 		}
 
