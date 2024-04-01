@@ -201,8 +201,9 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // Photometric interp packs a lot of information
   printf ("  Colour Type (Photometric Interpretation): ");
 
-  int num_palette;
-  int num_trans;
+  int num_palette = 0;
+  int num_trans = 0;
+  png_colorp palette;
 
   switch (colourtype)
     {
@@ -212,10 +213,16 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
     case PNG_COLOR_TYPE_PALETTE:
       printf ("PALETTED COLOUR ");
-      if (num_trans > 0)
-	printf ("with alpha ");
-      printf ("(%d colours, %d transparent) ",
-	      num_palette, num_trans);
+      if (PNG_INFO_PLTE == png_get_PLTE(png, info, &palette, &num_palette)) {
+        png_bytep trans;
+        png_color_16p trans_values;
+        if (PNG_INFO_tRNS == png_get_tRNS(png, info, &trans, &num_trans, &trans_values)){
+          if (num_trans > 0)
+            printf ("with alpha ");
+        }
+        printf ("(%d colours, %d transparent) ",
+                num_palette, num_trans);
+      }
       break;
 
     case PNG_COLOR_TYPE_RGB:
