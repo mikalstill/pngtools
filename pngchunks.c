@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   while(!lastchunk)
     {
       head = (pngchunks_header *) offset;
-      printf("Chunk: Data Length %d (max %d), Type %d [%c%c%c%c]\n", 
+      printf("Chunk: Data Length %u (max %u), Type %d [%c%c%c%c]\n",
 	     ntohl(head->len), 
 	     (unsigned int) pow(2, 31) - 1,
 	     head->type.i,
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
 
       if(strncmp(head->type.c, "IHDR", 4) == 0)
 	{
-	  printf("  IHDR Width: %d\n  IHDR Height: %d\n  IHDR Bitdepth: %d\n  IHDR Colortype: %d\n  IHDR Compression: %d\n  IHDR Filter: %d\n  IHDR Interlace: %d\n",
+	  printf("  IHDR Width: %u\n  IHDR Height: %u\n  IHDR Bitdepth: %u\n  IHDR Colortype: %u\n  IHDR Compression: %u\n  IHDR Filter: %u\n  IHDR Interlace: %u\n",
 		 ntohl(((pngchunks_IHDR *) offset)->width),
 		 ntohl(((pngchunks_IHDR *) offset)->height),
 		 ((pngchunks_IHDR *) offset)->bitdepth,
@@ -160,7 +160,7 @@ int main(int argc, char *argv[])
       }
 
       offset += ntohl(head->len);
-      printf("  Chunk CRC: %d\n", ntohl(*((long *) offset)));
+      printf("  Chunk CRC: %u\n", ntohl(*((long *) offset)));
       offset += 4;
     }
 

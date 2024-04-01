@@ -185,17 +185,17 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // Start displaying information
   ///////////////////////////////////////////////////////////////////////////
 
-  printf ("  Image Width: %d Image Length: %d\n", width, height);
+  printf ("  Image Width: %u Image Length: %u\n", width, height);
   int pixel_depth;
   pixel_depth = bitdepth * png_get_channels(png, info);
   if(tiffnames == pnginfo_true){
     printf ("  Bits/Sample: %d\n", bitdepth);
-    printf ("  Samples/Pixel: %d\n", png_get_channels(png, info));
+    printf ("  Samples/Pixel: %u\n", png_get_channels(png, info));
     printf ("  Pixel Depth: %d\n", pixel_depth);	// Does this add value?
   }
   else{
     printf ("  Bitdepth (Bits/Sample): %d\n", bitdepth);
-    printf ("  Channels (Samples/Pixel): %d\n", png_get_channels(png, info));
+    printf ("  Channels (Samples/Pixel): %u\n", png_get_channels(png, info));
     printf ("  Pixel depth (Pixel Depth): %d\n", pixel_depth);	// Does this add value?
   }
 
@@ -288,7 +288,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   int phys_unit_type;
   png_get_pHYs (png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type);
 
-  printf ("  Resolution: %d, %d ",
+  printf ("  Resolution: %u, %u ",
 	  x_pixels_per_unit, y_pixels_per_unit);
   switch (phys_unit_type)
     {
@@ -398,7 +398,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	    bytespersample++;
 
 	  printf ("Dumping the bitmap for this image:\n");
-	  printf ("(Expanded samples result in %d bytes per pixel, %d channels with %d bytes per channel)\n\n", 
+	  printf ("(Expanded samples result in %d bytes per pixel, %u channels with %d bytes per channel)\n\n",
 		  png_get_channels(png, info) * bytespersample, png_get_channels(png, info), bytespersample);
 
 	  // runlen is used to stop us displaying repeated byte patterns over and over --
