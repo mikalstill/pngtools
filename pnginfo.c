@@ -290,8 +290,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
     }
   printf ("\n");
 
-  png_uint_32 x_pixels_per_unit, y_pixels_per_unit;
-  int phys_unit_type;
+  png_uint_32 x_pixels_per_unit = 0, y_pixels_per_unit = 0;
+  int phys_unit_type = PNG_RESOLUTION_UNKNOWN;
   png_get_pHYs (png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type);
 
   printf ("  Resolution: %d, %d ",
