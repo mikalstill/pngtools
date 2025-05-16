@@ -1,0 +1,10 @@
+.deps
+*.o
+*.swp
+Makefile
+config.log
+config.status
+pngchunkdesc
+pngchunks
+pngcp
+pnginfo
