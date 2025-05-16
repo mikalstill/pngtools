@@ -11,7 +11,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		      int *bitdepth, int *channels){
   FILE *image;
   png_uint_32 i, j, rowbytes;
-  png_structp png;
+  png_structp png = NULL;
   png_infop info;
   png_bytepp row_pointers = NULL;
   unsigned char sig[8];
