@@ -25,8 +25,8 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   }
 
   // Check that it really is a PNG file
-  fread(sig, 1, 8, image);
-  if(!png_sig_cmp(sig, 0, 8) == 0){
+  if(fread(sig, 1, 8, image) != 8 ||
+     !png_sig_cmp(sig, 0, 8) == 0){
     fprintf(stderr, "This file is not a valid PNG file\n");
     goto error;
   }

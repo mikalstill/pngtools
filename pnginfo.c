@@ -156,8 +156,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
     pnginfo_error ("Could not open the specified PNG file.");
 
   // Check that it really is a PNG file
-  fread (sig, 1, 8, image);
-  if (!png_sig_cmp(sig, 0, 8) == 0)
+  if(fread(sig, 1, 8, image) != 8 ||
+     !png_sig_cmp(sig, 0, 8) == 0)
     pnginfo_error ("This file is not a valid PNG file.");
 
   // Start decompressing
