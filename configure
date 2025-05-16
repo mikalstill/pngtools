@@ -3470,8 +3470,8 @@ fi
 
 
 
-{ echo "$as_me:$LINENO: checking for png_libpng_ver in -lpng" >&5
-echo $ECHO_N "checking for png_libpng_ver in -lpng... $ECHO_C" >&6; }
+{ echo "$as_me:$LINENO: checking for png_access_version_number in -lpng" >&5
+echo $ECHO_N "checking for png_access_version_number in -lpng... $ECHO_C" >&6; }
 if test "${ac_cv_lib_png_png_libpng_ver+set}" = set; then
   echo $ECHO_N "(cached) $ECHO_C" >&6
 else
@@ -3490,11 +3490,11 @@ cat >>conftest.$ac_ext <<_ACEOF
 #ifdef __cplusplus
 extern "C"
 #endif
-char png_libpng_ver ();
+char png_access_version_number ();
 int
 main ()
 {
-return png_libpng_ver ();
+return png_access_version_number ();
   ;
   return 0;
 }
