@@ -15,6 +15,7 @@ config.h.in
 config.log
 config.status
 configure
+configure~
 stamp-h1
 .deps/
 config/compile
