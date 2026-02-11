@@ -138,8 +138,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 {
   FILE *image;
   png_uint_32 width, height;
-  unsigned long imageBufSize, runlen;
-  unsigned char signature;
+  unsigned long runlen;
   int bitdepth, colourtype;
   png_uint_32 i, j, rowbytes;
   png_structp png;

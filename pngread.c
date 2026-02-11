@@ -10,7 +10,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
 		      int *bitdepth, int *channels){
   FILE *image;
-  png_uint_32 i, j, rowbytes;
+  png_uint_32 i, rowbytes;
   png_structp png;
   png_infop info;
   png_bytepp row_pointers = NULL;
