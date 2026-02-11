@@ -1,5 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(pngtools, [0.4-dev])
+AC_INIT(pngtools, [1.0])
 AC_CONFIG_SRCDIR([pnginfo.c])
 AC_CONFIG_AUX_DIR(config)
 AC_REVISION
@@ -30,5 +30,9 @@ dnl Checks for library functions.
 AC_FUNC_VPRINTF
 dnl AC_FUNC_SNPRINTF
 
-AC_CONFIG_FILES([Makefile man/Makefile])
+AC_CONFIG_FILES([Makefile man/Makefile
+                 man/pngchunkdesc.sgml
+                 man/pngchunks.sgml
+                 man/pngcp.sgml
+                 man/pnginfo.sgml])
 AC_OUTPUT

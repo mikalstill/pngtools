@@ -1,24 +1,3 @@
-/******************************************************************************
-DOCBOOK START
-
-FUNCTION pngchunkdesc
-PURPOSE decode information embedded into a PNG chunk name
-
-SYNOPSIS START
-pngchunkdesc
-SYNOPSIS END
-
-DESCRIPTION START
-PNG files are based around a series of chunks, which embody the information stored in the image file. These chunks have four character ASCII names, where the case of each letter stores additional information.
-</para>
-
-<para>
-This program decodes the case information in the chunk names, and displays it. The program reads chunk names from stdin, and write chunk descriptions to stdout.
-DESCRIPTION END
-SEEALSO libpng libtiff tiffinfo pnginfo
-DOCBOOK END
-******************************************************************************/
-
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>

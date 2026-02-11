@@ -67,8 +67,6 @@ Or run individual checks manually:
 - Functions use `snake_case` with tool-name prefixes (e.g.
   `pnginfo_displayfile`)
 - Comments are C99 `//` style for inline, `/* */` for block headers
-- DocBook documentation is embedded in source file headers as
-  structured comments
 - The build uses `-Wall -Wextra -Werror`: all warnings are errors.
   New code must compile warning-free.
 

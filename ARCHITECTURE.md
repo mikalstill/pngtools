@@ -78,8 +78,12 @@ GNU Autotools (autoconf + automake):
 - **Makefile.am**: Builds four binaries. pnginfo and pngchunks are
   standalone; pngcp links pngread.c, pngwrite.c, and inflateraster.c.
   pngcp additionally links libm.
-- **man/**: DocBook SGML man page sources, built to man pages via
-  `docbook2man`.
+- **man/**: DocBook SGML man page sources (`man/*.sgml.in`), built
+  to man pages via `docbook2man`. The `.sgml.in` templates use
+  `@PACKAGE_VERSION@` which `configure` substitutes from
+  `AC_INIT` to generate the `.sgml` files. Each file contains
+  `<refmiscinfo>` elements in `<refmeta>` that set the man page
+  footer (source, version, manual section).
 
 Build steps: `aclocal && autoconf && automake --add-missing &&
 autoreconf && ./configure && make`
