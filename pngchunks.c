@@ -112,15 +112,13 @@ main(int argc, char *argv[])
               break;
             }
 
-          switch (((pngchunks_IHDR *)offset)->filter)
+          if (((pngchunks_IHDR *)offset)->filter == 0)
             {
-            case 0:
               printf("  IHDR Filter method is type zero (None, Sub, Up, Average, Paeth)\n");
-              break;
-
-            default:
+            }
+          else
+            {
               printf("  IHDR Filter method is unknown\n");
-              break;
             }
 
           switch (((pngchunks_IHDR *)offset)->interlace)
