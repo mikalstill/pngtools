@@ -102,8 +102,28 @@ Five sample PNG files covering different configurations:
 | multibytesample.png       | 32x32      | 16        | Grayscale   |
 | grayscale.png             | 32x32      | 4         | Grayscale   |
 
-These are used for manual testing only; there is no automated test
-suite.
+Additional generated test images in `testdata/` (created by
+`tests/generate_test_images.py`):
+
+| File                   | Dimensions | Bit Depth | Colour Type        |
+|------------------------|------------|-----------|--------------------|
+| paletted.png           | 32x32      | 8         | Paletted           |
+| interlaced.png         | 32x32      | 8         | RGB (Adam7)        |
+| with_text.png          | 32x32      | 8         | RGB + tEXt chunks  |
+| with_transparency.png  | 32x32      | 8         | Paletted + tRNS    |
+
+## Test Suite
+
+48 automated tests using Python testtools + stestr, organised into
+four test modules matching the four tools:
+
+- `tests/test_pnginfo.py` -- metadata, tiff mode, bitmap dump, errors
+- `tests/test_pngchunks.py` -- chunk listing, IHDR parsing, errors
+- `tests/test_pngchunkdesc.py` -- case-bit decoding
+- `tests/test_pngcp.py` -- copy, bitdepth/channel changes, errors
+
+Tests run the compiled binaries via subprocess and assert on exit
+codes and stdout/stderr content. See README.md for how to run them.
 
 ## Known Bugs and Issues
 
@@ -161,11 +181,7 @@ suite.
 
 ### Minor
 
-10. **No automated tests**: The five sample PNG files exist but there
-    is no test harness that verifies tool output against expected
-    results.
-
-11. **pnginfo.c:160 -- fread return unchecked**: The return value of
+10. **pnginfo.c:160 -- fread return unchecked**: The return value of
     `fread()` when reading the PNG signature is not checked.
 
 12. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`

@@ -27,6 +27,11 @@ config/ltmain.sh
 config/missing
 config/mkinstalldirs
 
+# Test infrastructure
+tests/.venv/
+.stestr/
+testdata/
+
 # Generated man pages
 man/Makefile
 man/Makefile.in

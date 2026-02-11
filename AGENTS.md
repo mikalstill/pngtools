@@ -20,21 +20,27 @@ Dependencies: libpng-dev, libm, docbook-utils (for man pages).
 
 ## Testing
 
-There is no automated test suite. Five sample PNG files are included
-in the repository root for manual testing:
+48 automated tests using Python testtools + stestr:
 
 ```bash
-./pnginfo sample.png
-./pnginfo -t input.png
-./pnginfo -d grayscale.png
-./pngchunks sample.png
-echo "IHDR" | ./pngchunkdesc
-./pngcp input.png output.png
-./pngcp -d 16 -s 3 grayscale.png output.png
+# One-time setup
+python3 -m venv tests/.venv
+tests/.venv/bin/pip install -r test-requirements.txt
+tests/.venv/bin/python tests/generate_test_images.py
+
+# Run all tests (requires binaries to be built first)
+tests/.venv/bin/stestr run
+
+# Run a specific test module
+tests/.venv/bin/stestr run test_pnginfo
 ```
 
-When making changes, verify at minimum that all four tools build
-cleanly and produce sensible output on the sample files.
+Tests run the compiled binaries via subprocess and check exit
+codes and stdout/stderr content. They use sample PNGs from the
+repo root plus generated images in `testdata/`.
+
+When making changes, run the full test suite. If adding new
+features or fixing bugs, add corresponding tests.
 
 ## Code Style
 
@@ -96,12 +102,7 @@ details.
 
 ### Improvements Worth Making
 
-7. **Add an automated test suite**: Even simple shell-script tests
-   that run each tool on the sample files and compare output against
-   golden files would catch regressions. The CI workflow currently
-   only builds.
-
-8. **Deduplicate the meanings table**: The chunk name case-meanings
+7. **Deduplicate the meanings table**: The chunk name case-meanings
    array is defined identically in pngchunkdesc.c and pngchunks.c.
    Extract it to a shared header or source file.
 

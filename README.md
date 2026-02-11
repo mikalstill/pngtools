@@ -55,6 +55,25 @@ echo "tEXt" | pngchunkdesc
 pngcp -d 16 input.png output.png
 ```
 
+## Testing
+
+The test suite uses Python testtools + stestr:
+
+```bash
+# One-time setup
+python3 -m venv tests/.venv
+tests/.venv/bin/pip install -r test-requirements.txt
+
+# Generate additional test images
+tests/.venv/bin/python tests/generate_test_images.py
+
+# Run all tests
+tests/.venv/bin/stestr run
+
+# Run a specific test module
+tests/.venv/bin/stestr run test_pnginfo
+```
+
 ## Documentation
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) -- code structure, data flow,
