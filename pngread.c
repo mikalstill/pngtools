@@ -4,10 +4,10 @@
 #include <png.h>
 #include <unistd.h>
 
-char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
+png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		int *bitdepth, int *channels);
 
-char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
+png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		      int *bitdepth, int *channels){
   FILE *image;
   png_uint_32 i, rowbytes;
@@ -15,7 +15,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   png_infop info;
   png_bytepp row_pointers = NULL;
   unsigned char sig[8];
-  char *raster;
+  png_byte *raster;
   int colourtype;
 
   // Open the file
@@ -77,7 +77,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   }
 
   // Space for the bitmap
-  if((raster = (unsigned char *) malloc ((rowbytes * *height) + 1)) == NULL){
+  if((raster = malloc ((rowbytes * *height) + 1)) == NULL){
     fprintf(stderr, "Could not allocate memory\n");
     goto error;
   }

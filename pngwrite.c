@@ -5,8 +5,8 @@
 #include <unistd.h>
 #include "pngcp.h"
 
-int writeimage(char *filename, unsigned long width, unsigned long height, 
-		      int bitdepth, int channels, char *raster){
+int writeimage(char *filename, unsigned long width, unsigned long height,
+		      int bitdepth, int channels, png_byte *raster){
   FILE *image;
   png_structp png;
   png_infop info;

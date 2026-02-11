@@ -1,13 +1,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <png.h>
 
 // Inflate a raster to a given pixel sample size
-char *inflateraster(char *input, unsigned long width, unsigned long height, 
-		    int bitdepth, int targetbitdepth, 
+png_byte *inflateraster(png_byte *input, unsigned long width,
+		    unsigned long height,
+		    int bitdepth, int targetbitdepth,
 		    int channels, int targetchannels){
   float scalefactor;
-  char *output;
+  png_byte *output;
   int bytedepth, targetbytedepth;
   unsigned int inset, outset;
 
@@ -26,9 +28,9 @@ char *inflateraster(char *input, unsigned long width, unsigned long height,
     targetbytedepth++;
 
   // Build the output raster
-  if((output = (char *) malloc(width * height * targetchannels * targetbytedepth)) == NULL){
+  if((output = malloc(width * height * targetchannels * targetbytedepth)) == NULL){
     fprintf(stderr, "Failed to allocate enough memory for output raster\n");
-    return (char *) -1;
+    return (png_byte *) -1;
   }
 
   // Are we changing the bitdepth?

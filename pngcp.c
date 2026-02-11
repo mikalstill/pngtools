@@ -36,7 +36,7 @@ void usage();
 int main(int argc, char *argv[]){
   unsigned long width, height;
   int channels, targetchannels = -1, bitdepth, targetbitdepth = -1, optchar, i;
-  char *input, *output;
+  png_byte *input, *output;
   
   i = 1;
   while ((optchar = getopt (argc, argv, "d:s:")) != -1)

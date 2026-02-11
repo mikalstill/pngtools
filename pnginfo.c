@@ -145,7 +145,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   png_infop info;
   unsigned char sig[8];
   png_bytepp row_pointers = NULL;
-  char *bitmap;
+  png_byte *bitmap;
 
   printf ("%s%s...\n", filename, \
 	  tiffnames == pnginfo_true? " (tiffinfo compatible labels)" : "");
