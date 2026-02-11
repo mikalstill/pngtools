@@ -33,6 +33,8 @@ char *meanings[4][2] = {
 int
 main (int argc, char *argv[])
 {
+  (void)argc;
+  (void)argv;
   char s[200];
 
   while (fgets (s, 200, stdin) != NULL)
