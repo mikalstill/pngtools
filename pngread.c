@@ -13,9 +13,9 @@ png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   png_uint_32 i, rowbytes;
   png_structp png;
   png_infop info;
-  png_bytepp row_pointers = NULL;
+  png_bytepp volatile row_pointers = NULL;
   unsigned char sig[8];
-  png_byte *raster;
+  png_byte * volatile raster = NULL;
   int colourtype;
 
   // Open the file
