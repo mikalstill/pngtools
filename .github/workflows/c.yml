@@ -28,7 +28,9 @@ jobs:
       - name: clang-format check
         run: scripts/check-format.sh
       - name: cppcheck
-        run: cppcheck --error-exitcode=1 --enable=warning,style --suppress=missingIncludeSystem --suppress=normalCheckLevelMaxBranches *.c
+        run: |
+          cppcheck --error-exitcode=1 --enable=warning,style --suppress=missingIncludeSystem \
+            --suppress=normalCheckLevelMaxBranches ./*.c
       - name: aclocal
         run: aclocal
       - name: autoconf
