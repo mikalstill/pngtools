@@ -42,8 +42,9 @@ repo root plus generated images in `testdata/`.
 When making changes, run the full test suite. If adding new
 features or fixing bugs, add corresponding tests.
 
-Pre-commit hooks run clang-format, cppcheck, and the full
-build-and-test cycle automatically. Set them up with:
+Pre-commit hooks run actionlint, shellcheck, clang-format,
+cppcheck, and the full build-and-test cycle automatically.
+Set them up with:
 
 ```bash
 pip install pre-commit
@@ -107,5 +108,7 @@ Or run individual checks manually:
   command-line interface or behaviour, update the corresponding SGML
   man page source as well.
 
-- **CI runs the full test suite.** The GitHub Actions workflow
-  builds the project and runs all 53 tests. PRs must pass CI.
+- **CI runs the full test suite.** The GitHub Actions CI workflow
+  builds the project and runs all 53 tests. A separate CodeQL
+  workflow performs security and quality analysis. PRs must pass
+  both CI checks.

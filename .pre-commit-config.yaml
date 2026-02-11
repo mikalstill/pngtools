@@ -1,6 +1,23 @@
 repos:
   - repo: local
     hooks:
+      - id: actionlint
+        name: actionlint
+        entry: actionlint
+        language: golang
+        additional_dependencies:
+          - github.com/rhysd/actionlint/cmd/actionlint@v1.7.10
+        files: ^\.github/workflows/
+        types: [yaml]
+
+      - id: shellcheck
+        name: shellcheck
+        entry: shellcheck
+        language: python
+        additional_dependencies:
+          - shellcheck-py==0.10.0.1
+        files: ^scripts/
+
       - id: clang-format
         name: clang-format
         entry: scripts/check-format.sh

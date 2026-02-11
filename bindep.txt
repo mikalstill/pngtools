@@ -22,3 +22,5 @@ clang-format [platform:dpkg]
 clang-tools-extra [platform:rpm]
 
 cppcheck
+
+shellcheck

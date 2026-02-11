@@ -94,19 +94,37 @@ autoreconf && ./configure && make`
 - **cppcheck**: Static analysis for warnings and style issues.
   Runs with `--enable=warning,style` in both CI and pre-commit.
 
+- **shellcheck**: Lints shell scripts in `scripts/`.
+
+- **actionlint**: Validates GitHub Actions workflow YAML files.
+
+- **CodeQL**: GitHub's semantic code analysis for security
+  vulnerabilities and code quality. Runs as a separate CI
+  workflow (`.github/workflows/codeql.yml`) with the
+  `security-and-quality` query suite. Also runs weekly on a
+  schedule to catch newly discovered vulnerability patterns.
+
 ## CI
 
-GitHub Actions (`.github/workflows/c.yml`): runs clang-format and
-cppcheck checks first, then builds on Ubuntu with libpng-dev and
-docbook-utils. Runs the full autotools chain, configure, make,
-and make install to a staging directory. Then sets up a Python
-venv, installs test dependencies, generates test images, and runs
-the full test suite via stestr.
+Two GitHub Actions workflows:
 
-Three pre-commit hooks run automatically before each commit:
-1. **clang-format** -- checks source formatting
-2. **cppcheck** -- static analysis
-3. **build-and-test** -- full build and test cycle
+**CI** (`.github/workflows/c.yml`): runs actionlint, shellcheck,
+clang-format, and cppcheck checks first, then builds on Ubuntu
+with libpng-dev and docbook-utils. Runs the full autotools chain,
+configure, make, and make install to a staging directory. Then
+sets up a Python venv, installs test dependencies, generates test
+images, and runs the full test suite via stestr.
+
+**CodeQL** (`.github/workflows/codeql.yml`): runs on push, PR,
+and weekly schedule. Performs deep semantic security and quality
+analysis of the C source code.
+
+Five pre-commit hooks run automatically before each commit:
+1. **actionlint** -- validates workflow YAML
+2. **shellcheck** -- lints shell scripts
+3. **clang-format** -- checks source formatting
+4. **cppcheck** -- static analysis
+5. **build-and-test** -- full build and test cycle
 
 ## Test Data
 
@@ -154,3 +172,5 @@ No known bugs.
 - **docbook-utils** (optional): man page generation from SGML sources
 - **clang-format** (development): code formatting enforcement
 - **cppcheck** (development): static analysis
+- **shellcheck** (development): shell script linting
+- **actionlint** (development): GitHub Actions workflow validation
