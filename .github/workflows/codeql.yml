@@ -30,7 +30,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y libpng-dev
+          sudo apt-get install -y libpng-dev docbook-utils
 
       - name: Build
         run: |
