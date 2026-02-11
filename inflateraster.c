@@ -78,7 +78,7 @@ inflateraster(png_byte *input, png_uint_32 width, png_uint_32 height, int bitdep
   targetbytedepth = (targetbitdepth + 7) / 8;
 
   // Build the output raster
-  if ((output = malloc(width * height * targetchannels * targetbytedepth)) == NULL)
+  if ((output = malloc((size_t)width * height * targetchannels * targetbytedepth)) == NULL)
     {
       fprintf(stderr, "Failed to allocate enough memory for output raster\n");
       return NULL;
