@@ -11,7 +11,8 @@ int writeimage(char *filename, unsigned long width, unsigned long height,
   png_structp png;
   png_infop info;
   png_bytepp row_pointers = NULL;
-  int i, rowbytes;
+  unsigned long i;
+  int rowbytes;
 
   if((image = fopen(filename, "wb")) == NULL){
     fprintf(stderr, "Could not open the output image\n");

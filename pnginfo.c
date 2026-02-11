@@ -309,16 +309,16 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
 
   png_textp text;
-  int num_text;
+  int num_text, ti;
   num_text=png_get_text(png,info,&text,NULL);
 
   // Text comments
   printf ("  Number of text strings: %d\n",
 	  num_text);
 
-  for (i = 0; i < num_text; i++)
+  for (ti = 0; ti < num_text; ti++)
     {
-      printf ("    %s ", text[i].key);
+      printf ("    %s ", text[ti].key);
 
       switch (text[1].compression)
 	{
@@ -345,12 +345,12 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
       printf (": ");
       j = 0;
-      while (text[i].text[j] != '\0')
+      while (text[ti].text[j] != '\0')
 	{
-	  if (text[i].text[j] == '\n')
+	  if (text[ti].text[j] == '\n')
 	    printf ("\\n");
 	  else
-	    fputc (text[i].text[j], stdout);
+	    fputc (text[ti].text[j], stdout);
 
 	  j++;
 	}
