@@ -201,8 +201,14 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // Photometric interp packs a lot of information
   printf ("  Colour Type (Photometric Interpretation): ");
 
-  int num_palette;
-  int num_trans;
+  int num_palette = 0;
+  int num_trans = 0;
+  png_colorp palette;
+  png_bytep trans_alpha;
+  png_color_16p trans_color;
+
+  png_get_PLTE(png, info, &palette, &num_palette);
+  png_get_tRNS(png, info, &trans_alpha, &num_trans, &trans_color);
 
   switch (colourtype)
     {
