@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
       exit(1);
     }
 
-  if ((data = mmap (NULL, stat.st_size, PROT_READ, MAP_SHARED, fd, 0)) < 0)
+  if ((data = mmap (NULL, stat.st_size, PROT_READ, MAP_SHARED, fd, 0)) == MAP_FAILED)
     {
       fprintf (stderr, "Could not mmap data file\n");
       exit (1);
