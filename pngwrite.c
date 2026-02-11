@@ -3,6 +3,8 @@
 #include <string.h>
 #include <png.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #include "pngcp.h"
 
 int
@@ -17,9 +19,17 @@ writeimage(const char *filename, png_uint_32 width, png_uint_32 height, int bitd
   int rowbytes;
   volatile int ret = -1;
 
-  if ((image = fopen(filename, "wb")) == NULL)
+  int fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+  if (fd < 0)
     {
       fprintf(stderr, "Could not open the output image\n");
+      goto cleanup;
+    }
+
+  if ((image = fdopen(fd, "wb")) == NULL)
+    {
+      fprintf(stderr, "Could not open the output image\n");
+      close(fd);
       goto cleanup;
     }
 
