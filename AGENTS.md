@@ -59,7 +59,7 @@ Or run the build and tests manually via
 - Indentation is a mix of tabs and spaces (historical; GNU style with
   tabs for primary indentation, two-space offsets for continuation)
 - Functions use `snake_case` with tool-name prefixes (e.g.
-  `pnginfo_displayfile`, `pnginfo_xmalloc`)
+  `pnginfo_displayfile`)
 - Comments are C99 `//` style for inline, `/* */` for block headers
 - DocBook documentation is embedded in source file headers as
   structured comments
@@ -91,12 +91,7 @@ details.
 
 ### Improvements Worth Making
 
-1. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
-   `exit(1)` without cleanup. Consider restructuring to close files
-   and free libpng structures before exiting, or accept the leaks as
-   intentional for a short-lived CLI tool and document that decision.
-
-2. **Fix inflateraster limitations**: The two `todo_mikal` items --
+1. **Fix inflateraster limitations**: The two `todo_mikal` items --
    multi-byte sample support and combined bitdepth+channel changes --
    have been outstanding for ~20 years.
 

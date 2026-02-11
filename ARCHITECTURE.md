@@ -36,9 +36,8 @@ public/private, etc.).
 ### pngchunkdesc (pngchunkdesc.c, ~48 lines)
 
 A stdin/stdout filter that reads four-character PNG chunk names and
-decodes the case information embedded in each letter. The same
-`meanings` lookup table is duplicated between this file and
-pngchunks.c.
+decodes the case information embedded in each letter. Uses the shared
+`chunk_meanings` lookup table from `chunk_meanings.h`.
 
 ### pngcp (pngcp.c + pngread.c + pngwrite.c + inflateraster.c, ~350 lines total)
 
@@ -141,12 +140,6 @@ codes and stdout/stderr content. See README.md for how to run them.
    offset to `long *` and dereferences it. Should use `int32_t *` or
    `uint32_t *` for portability and correctness.
 
-### Minor
-
-3. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
-   which exits immediately via `exit(1)`, leaking the open file
-   handle and libpng structures. pngread.c has a goto-based cleanup
-   pattern but it is incomplete.
 
 ## Dependencies
 
