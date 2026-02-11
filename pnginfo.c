@@ -326,7 +326,7 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
     {
       printf ("    %s ", text[ti].key);
 
-      switch (text[1].compression)
+      switch (text[ti].compression)
 	{
 	case -1:
 	  printf ("(tEXt uncompressed)");
