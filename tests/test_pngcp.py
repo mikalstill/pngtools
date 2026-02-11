@@ -59,6 +59,70 @@ class TestPngcp(base.PngtoolsTestCase):
         self.assertIn('Image Width: 256', info.stdout)
         self.assertIn('Image Length: 256', info.stdout)
 
+    def test_reduce_16bit_to_8bit(self):
+        """16-bit grayscale reduced to 8-bit."""
+        output = self.tmp_path('reduced.png')
+        result = self.run_tool('pngcp', [
+            '-d', '8',
+            self.sample_path('multibytesample.png'), output
+        ])
+        self.assertEqual(0, result.returncode)
+
+        info = self.run_pnginfo(output)
+        self.assertIn('Bitdepth (Bits/Sample): 8', info.stdout)
+        self.assertIn('Channels (Samples/Pixel): 1', info.stdout)
+
+    def test_combined_bitdepth_and_channels(self):
+        """Combined bitdepth and channel change in one pass."""
+        output = self.tmp_path('combined.png')
+        result = self.run_tool('pngcp', [
+            '-d', '16', '-s', '3',
+            self.sample_path('grayscale.png'), output
+        ])
+        self.assertEqual(0, result.returncode)
+
+        info = self.run_pnginfo(output)
+        self.assertIn('Bitdepth (Bits/Sample): 16', info.stdout)
+        self.assertIn('Channels (Samples/Pixel): 3', info.stdout)
+
+    def test_add_alpha_channel(self):
+        """Adding alpha channel to RGB image."""
+        output = self.tmp_path('with_alpha.png')
+        result = self.run_tool('pngcp', [
+            '-s', '4',
+            self.sample_path('input.png'), output
+        ])
+        self.assertEqual(0, result.returncode)
+
+        info = self.run_pnginfo(output)
+        self.assertIn('Channels (Samples/Pixel): 4', info.stdout)
+        self.assertIn('RGB with alpha channel', info.stdout)
+
+    def test_gray_to_rgb(self):
+        """Grayscale to RGB channel expansion."""
+        output = self.tmp_path('gray_to_rgb.png')
+        result = self.run_tool('pngcp', [
+            '-s', '3',
+            self.sample_path('grayscale.png'), output
+        ])
+        self.assertEqual(0, result.returncode)
+
+        info = self.run_pnginfo(output)
+        self.assertIn('Channels (Samples/Pixel): 3', info.stdout)
+        self.assertIn('RGB', info.stdout)
+
+    def test_drop_alpha_channel(self):
+        """Dropping alpha channel from RGBA image."""
+        output = self.tmp_path('no_alpha.png')
+        result = self.run_tool('pngcp', [
+            '-s', '3',
+            self.sample_path('foursamplesperpixel.png'), output
+        ])
+        self.assertEqual(0, result.returncode)
+
+        info = self.run_pnginfo(output)
+        self.assertIn('Channels (Samples/Pixel): 3', info.stdout)
+
 
 class TestPngcpErrors(base.PngtoolsTestCase):
     """Test pngcp error handling."""

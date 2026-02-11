@@ -53,9 +53,11 @@ readimage() -> inflateraster() -> writeimage()
   along with width, height, bitdepth, and channel count.
 
 - **inflateraster.c / inflateraster()**: Transforms the raster to the
-  target bit depth and/or channel count using floating-point scale
-  factors. Has known limitations with multi-byte samples and cannot
-  perform both bitdepth and channel changes in a single pass.
+  target bit depth and/or channel count. Processes all pixels in a
+  single pass, handling both bitdepth scaling and channel mapping
+  together. Supports multi-byte samples (e.g. 16-bit) using
+  big-endian byte order. Channel mapping supports gray-to-RGB
+  expansion, alpha addition/removal, and direct channel copying.
 
 - **pngwrite.c / writeimage()**: Writes the output PNG via libpng.
   Derives the PNG colour type from the channel count (1=gray,
@@ -117,7 +119,7 @@ Additional generated test images in `testdata/` (created by
 
 ## Test Suite
 
-48 automated tests using Python testtools + stestr, organised into
+53 automated tests using Python testtools + stestr, organised into
 four test modules matching the four tools:
 
 - `tests/test_pnginfo.py` -- metadata, tiff mode, bitmap dump, errors
@@ -132,11 +134,7 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ### Moderate
 
-1. **inflateraster.c limitations**: Two `todo_mikal` comments note
-   that bitdepth scaling only works for single-byte depths (line 48)
-   and that simultaneous bitdepth + channel changes fail (line 55).
-
-2. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
+1. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
    offset to `long *` and dereferences it. Should use `int32_t *` or
    `uint32_t *` for portability and correctness.
 

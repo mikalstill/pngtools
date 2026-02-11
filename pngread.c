@@ -68,6 +68,7 @@ png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   // palette is correctly reported...
   //png_set_strip_alpha (png);
   png_read_update_info (png, info);
+  *bitdepth = png_get_bit_depth(png, info);
   *channels = png_get_channels(png, info);
   
   rowbytes = png_get_rowbytes (png, info);

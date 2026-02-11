@@ -3,29 +3,68 @@
 #include <math.h>
 #include <png.h>
 
+// Read a sample value from a byte buffer (big-endian for 16-bit PNG samples)
+static unsigned int read_sample(png_byte *data, int bytedepth){
+  if(bytedepth == 2)
+    return (data[0] << 8) | data[1];
+  return data[0];
+}
+
+// Write a sample value to a byte buffer (big-endian for 16-bit PNG samples)
+static void write_sample(png_byte *data, int bytedepth, unsigned int value){
+  if(bytedepth == 2){
+    data[0] = (value >> 8) & 0xFF;
+    data[1] = value & 0xFF;
+  } else {
+    data[0] = value & 0xFF;
+  }
+}
+
+// Map an output channel index to the corresponding input channel index.
+// Returns -1 if the output channel has no input source and should be
+// filled with the maximum sample value (e.g. opaque alpha).
+//
+// PNG channel layouts: 1=Gray, 2=Gray+Alpha, 3=RGB, 4=RGBA
+static int map_channel(int out_ch, int channels, int targetchannels){
+  int out_is_alpha = (targetchannels == 2 || targetchannels == 4) &&
+                     (out_ch == targetchannels - 1);
+
+  if(out_is_alpha){
+    // Map to input alpha channel if available
+    if(channels == 2) return 1;
+    if(channels == 4) return 3;
+    return -1;
+  }
+
+  // Gray -> RGB expansion: replicate gray to R, G, B
+  if(channels <= 2 && targetchannels >= 3 && out_ch < 3)
+    return 0;
+
+  // Direct mapping when input has the channel
+  if(out_ch < channels)
+    return out_ch;
+
+  return -1;
+}
+
 // Inflate a raster to a given pixel sample size
 png_byte *inflateraster(png_byte *input, png_uint_32 width,
 		    png_uint_32 height,
 		    int bitdepth, int targetbitdepth,
 		    int channels, int targetchannels){
-  float scalefactor;
   png_byte *output;
   int bytedepth, targetbytedepth;
-  unsigned int inset, outset;
+  png_uint_32 pixel, npixels;
+  float scalefactor;
+  unsigned int maxval;
 
-  // Why are we here?
+  // Nothing to do
   if((channels == targetchannels) && (bitdepth == targetbitdepth))
     return input;
 
-  // Calculate the byte depth
-  bytedepth = bitdepth / 8;
-  if(bitdepth % 8 != 0)
-    bytedepth++;
-  
-  // Calculate the target byte depth
-  targetbytedepth = targetbitdepth / 8;
-  if(targetbitdepth % 8 != 0)
-    targetbytedepth++;
+  // Calculate byte depths
+  bytedepth = (bitdepth + 7) / 8;
+  targetbytedepth = (targetbitdepth + 7) / 8;
 
   // Build the output raster
   if((output = malloc(width * height * targetchannels * targetbytedepth)) == NULL){
@@ -33,42 +72,44 @@ png_byte *inflateraster(png_byte *input, png_uint_32 width,
     return NULL;
   }
 
-  // Are we changing the bitdepth?
+  // Compute scaling factor for bitdepth changes, mapping the full
+  // input range [0, 2^src-1] to the full output range [0, 2^dst-1]
   if(bitdepth != targetbitdepth){
-    // Determine how much each sample has to be scaled by to get to the new bitdepth
-    scalefactor = (float) pow(2.0, (double) targetbitdepth)  / 
-      (float) pow(2.0, (double) bitdepth);
-    printf("Scaling factor is %f - %f / %f = %f\n", 
-	   (float) pow(2.0, (double) targetbitdepth),
-	   (float) pow(2.0, (double) bitdepth), 
-	   (float) pow(2.0, (double) bitdepth), 
-	   scalefactor);
-    
-    // Work through the input pixels, and turn them into output pixels
-    outset = 0;
-    for(inset = 0; inset < width * height * channels; inset += bytedepth){
-      // todo_mikal: This will only work for images with a bytedepth of one
-      output[outset] = input[inset] * scalefactor;
-      outset += targetbytedepth;
-    }
+    scalefactor = ((float)pow(2.0, (double)targetbitdepth) - 1.0) /
+                  ((float)pow(2.0, (double)bitdepth) - 1.0);
+    printf("Scaling factor is %f\n", scalefactor);
+  } else {
+    scalefactor = 1.0;
   }
-  
-  // Are we the number of channels?
-  // todo_mikal: we can't do both of these changes in one pass at the moment...
-  if(channels != targetchannels){
+
+  maxval = ((unsigned int)1 << targetbitdepth) - 1;
+
+  if(channels != targetchannels)
     printf("Expanding from %d channels to %d channels\n", channels, targetchannels);
-    printf("Target byte depth is %d bytes\n", targetbytedepth);
 
-    // Work through the input pixels, and turn them into output pixels
-    outset = 0;
-    for(inset = 0; inset < width * height * channels; inset += bytedepth){
-      int i;
+  // Process each pixel in a single pass, handling both bitdepth
+  // and channel changes together
+  npixels = width * height;
+  for(pixel = 0; pixel < npixels; pixel++){
+    png_byte *in_pixel = input + pixel * channels * bytedepth;
+    png_byte *out_pixel = output + pixel * targetchannels * targetbytedepth;
+    int ch;
 
-      // this wont work for just adding an alpha channel
-      for(i = 0; i < targetchannels - channels + 1; i++){
-	output[outset] = input[inset];
-	outset += targetbytedepth;
+    for(ch = 0; ch < targetchannels; ch++){
+      unsigned int value;
+      int src_ch = map_channel(ch, channels, targetchannels);
+
+      if(src_ch >= 0){
+	value = read_sample(in_pixel + src_ch * bytedepth, bytedepth);
+	value = (unsigned int)(value * scalefactor + 0.5);
+      } else {
+	value = maxval;
       }
+
+      if(value > maxval)
+	value = maxval;
+
+      write_sample(out_pixel + ch * targetbytedepth, targetbytedepth, value);
     }
   }
 

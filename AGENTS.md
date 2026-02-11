@@ -20,7 +20,7 @@ Dependencies: libpng-dev, libm, docbook-utils (for man pages).
 
 ## Testing
 
-48 automated tests using Python testtools + stestr:
+53 automated tests using Python testtools + stestr:
 
 ```bash
 # One-time setup
@@ -83,18 +83,6 @@ Or run the build and tests manually via
 | Makefile.am       | Automake build rules                         |
 | man/*.sgml        | DocBook SGML man page sources                |
 
-## Priority Improvements
-
-These are the most impactful bugs and improvements, roughly ordered
-by severity. See ARCHITECTURE.md "Known Bugs and Issues" for full
-details.
-
-### Improvements Worth Making
-
-1. **Fix inflateraster limitations**: The two `todo_mikal` items --
-   multi-byte sample support and combined bitdepth+channel changes --
-   have been outstanding for ~20 years.
-
 ## Things to Be Careful About
 
 - **This is packaged by Linux distributions.** Changes to command-line
@@ -115,4 +103,4 @@ details.
   man page source as well.
 
 - **CI runs the full test suite.** The GitHub Actions workflow
-  builds the project and runs all 48 tests. PRs must pass CI.
+  builds the project and runs all 53 tests. PRs must pass CI.
