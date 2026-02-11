@@ -29,6 +29,8 @@ config/mkinstalldirs
 
 # Test infrastructure
 tests/.venv/
+tests/__pycache__/
+__pycache__/
 .stestr/
 testdata/
 

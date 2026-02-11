@@ -42,6 +42,17 @@ repo root plus generated images in `testdata/`.
 When making changes, run the full test suite. If adding new
 features or fixing bugs, add corresponding tests.
 
+A pre-commit hook runs the full build-and-test cycle
+automatically. Set it up with:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Or run the build and tests manually via
+`scripts/build-and-test.sh`.
+
 ## Code Style
 
 - C with GNU Autotools conventions
@@ -126,9 +137,8 @@ details.
   users and packaging scripts. Preserve existing behaviour unless
   intentionally fixing a bug.
 
-- **The project has no tests.** Until a test suite exists, manually
-  verify changes against all five sample PNG files and both
-  pnginfo output modes (`-t` and default).
+- **Run the test suite before committing.** The pre-commit hook
+  does this automatically. If tests fail, fix them before pushing.
 
 - **pngchunks does manual binary parsing.** It does not use libpng
   and instead memory-maps the file and walks chunk headers directly.
@@ -139,6 +149,5 @@ details.
   command-line interface or behaviour, update the corresponding SGML
   man page source as well.
 
-- **The CI workflow uses actions/checkout@v2.** This is outdated and
-  may eventually stop working. Consider updating to v4 when touching
-  CI.
+- **CI runs the full test suite.** The GitHub Actions workflow
+  builds the project and runs all 48 tests. PRs must pass CI.

@@ -87,8 +87,13 @@ autoreconf && ./configure && make`
 ## CI
 
 GitHub Actions (`.github/workflows/c.yml`): builds on Ubuntu with
-libpng-dev and docbook-utils. Runs configure, make, and make install
-to a staging directory. No automated tests are executed.
+libpng-dev and docbook-utils. Runs the full autotools chain,
+configure, make, and make install to a staging directory. Then
+sets up a Python venv, installs test dependencies, generates test
+images, and runs the full test suite via stestr.
+
+A pre-commit hook (`scripts/build-and-test.sh`) runs the same
+build-and-test cycle locally before each commit.
 
 ## Test Data
 

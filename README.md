@@ -74,6 +74,22 @@ tests/.venv/bin/stestr run
 tests/.venv/bin/stestr run test_pnginfo
 ```
 
+Or use the all-in-one script that handles building and testing
+(including first-time setup):
+
+```bash
+scripts/build-and-test.sh
+```
+
+### Pre-commit Hook
+
+To automatically build and test before each commit:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
 ## Documentation
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) -- code structure, data flow,

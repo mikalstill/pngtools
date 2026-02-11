@@ -11,8 +11,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - name: install libpng
+      - uses: actions/checkout@v4
+      - name: install dependencies
         run: sudo apt-get install -y libpng-dev docbook-utils
       - name: aclocal
         run: aclocal
@@ -28,3 +28,11 @@ jobs:
         run: make
       - name: make install
         run: make install DESTDIR="$PWD/install"
+      - name: set up test venv
+        run: |
+          python3 -m venv tests/.venv
+          tests/.venv/bin/pip install -r test-requirements.txt
+      - name: generate test images
+        run: tests/.venv/bin/python tests/generate_test_images.py
+      - name: run tests
+        run: tests/.venv/bin/stestr run
