@@ -59,8 +59,8 @@ readimage() -> inflateraster() -> writeimage()
   perform both bitdepth and channel changes in a single pass.
 
 - **pngwrite.c / writeimage()**: Writes the output PNG via libpng.
-  Currently hardcodes `PNG_COLOR_TYPE_RGB` rather than deriving the
-  colour type from the channel count.
+  Derives the PNG colour type from the channel count (1=gray,
+  2=gray+alpha, 3=RGB, 4=RGBA).
 
 ## Header Files
 
@@ -134,14 +134,7 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ### Critical
 
-1. **pngwrite.c:67 -- hardcoded colour type**: `writeimage()` always
-   sets `PNG_COLOR_TYPE_RGB` regardless of the actual number of
-   channels. A comment in the code acknowledges this: "We need to
-   derive a PNG color type from the number of channels and bitdepth".
-   This means pngcp may produce invalid PNG files when the input is
-   grayscale or has an alpha channel.
-
-2. **pngcp.h type mismatch**: The header declares
+1. **pngcp.h type mismatch**: The header declares
    `readimage(..., unsigned long *width, unsigned long *height, ...)`
    but the implementation in pngread.c uses `png_uint_32 *` for both.
    On 64-bit systems where `unsigned long` is 8 bytes and
@@ -150,28 +143,28 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ### Moderate
 
-3. **inflateraster.c limitations**: Two `todo_mikal` comments note
+2. **inflateraster.c limitations**: Two `todo_mikal` comments note
    that bitdepth scaling only works for single-byte depths (line 48)
    and that simultaneous bitdepth + channel changes fail (line 55).
 
-4. **inflateraster.c:31 -- error sentinel**: On allocation failure,
+3. **inflateraster.c:31 -- error sentinel**: On allocation failure,
    returns `(png_byte *) -1` instead of NULL. The caller in pngcp.c
    checks for NULL, so this error path is never caught.
 
-5. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
+4. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
    offset to `long *` and dereferences it. Should use `int32_t *` or
    `uint32_t *` for portability and correctness.
 
-6. **Duplicated code**: The `meanings` lookup table for chunk name
+5. **Duplicated code**: The `meanings` lookup table for chunk name
    case decoding is defined identically in both pngchunkdesc.c and
    pngchunks.c.
 
 ### Minor
 
-7. **pnginfo.c:160 -- fread return unchecked**: The return value of
+6. **pnginfo.c:160 -- fread return unchecked**: The return value of
    `fread()` when reading the PNG signature is not checked.
 
-8. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
+7. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
    which exits immediately via `exit(1)`, leaking the open file
    handle and libpng structures. pngread.c has a goto-based cleanup
    pattern but it is incomplete.
