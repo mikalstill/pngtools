@@ -136,25 +136,18 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 1. **pnginfo.c:324 -- wrong array index in text chunk loop**: The
    switch reads `text[1].compression` instead of `text[i].compression`
-   inside the `for (i = 0; i < num_text; i++)` loop. This means every
-   text chunk displays the compression type of the *second* text chunk
-   rather than its own.
+   inside the `for (ti = 0; ti < num_text; ti++)` loop. This means
+   every text chunk displays the compression type of the *second* text
+   chunk rather than its own.
 
-2. **pnginfo.c:205-219 -- uninitialized variables**: `num_palette`
-   and `num_trans` are declared but never assigned. They are used
-   inside the `PNG_COLOR_TYPE_PALETTE` case to display palette and
-   transparency counts, which means the output contains garbage values.
-   These should be populated via `png_get_PLTE()` and
-   `png_get_tRNS()`.
-
-3. **pngwrite.c:67 -- hardcoded colour type**: `writeimage()` always
+2. **pngwrite.c:67 -- hardcoded colour type**: `writeimage()` always
    sets `PNG_COLOR_TYPE_RGB` regardless of the actual number of
    channels. A comment in the code acknowledges this: "We need to
    derive a PNG color type from the number of channels and bitdepth".
    This means pngcp may produce invalid PNG files when the input is
    grayscale or has an alpha channel.
 
-4. **pngcp.h type mismatch**: The header declares
+3. **pngcp.h type mismatch**: The header declares
    `readimage(..., unsigned long *width, unsigned long *height, ...)`
    but the implementation in pngread.c uses `png_uint_32 *` for both.
    On 64-bit systems where `unsigned long` is 8 bytes and
@@ -163,37 +156,31 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ### Moderate
 
-5. **inflateraster.c limitations**: Two `todo_mikal` comments note
+4. **inflateraster.c limitations**: Two `todo_mikal` comments note
    that bitdepth scaling only works for single-byte depths (line 48)
    and that simultaneous bitdepth + channel changes fail (line 55).
 
-6. **inflateraster.c:31 -- error sentinel**: On allocation failure,
-   returns `(char *) -1` instead of NULL. The caller in pngcp.c checks
-   for NULL, so this error path is never caught.
+5. **inflateraster.c:31 -- error sentinel**: On allocation failure,
+   returns `(png_byte *) -1` instead of NULL. The caller in pngcp.c
+   checks for NULL, so this error path is never caught.
 
-7. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
+6. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
    offset to `long *` and dereferences it. Should use `int32_t *` or
    `uint32_t *` for portability and correctness.
 
-8. **pngchunks.c:68 -- mmap return check**: Compares the `mmap()`
-   return value with `< 0` but `mmap()` returns `MAP_FAILED`
-   (typically `(void *) -1`), not a negative integer. The pointer
-   comparison with `< 0` is undefined behaviour.
-
-9. **Duplicated code**: The `meanings` lookup table for chunk name
+7. **Duplicated code**: The `meanings` lookup table for chunk name
    case decoding is defined identically in both pngchunkdesc.c and
    pngchunks.c.
 
 ### Minor
 
-10. **pnginfo.c:160 -- fread return unchecked**: The return value of
-    `fread()` when reading the PNG signature is not checked.
+8. **pnginfo.c:160 -- fread return unchecked**: The return value of
+   `fread()` when reading the PNG signature is not checked.
 
-12. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
-    which exits immediately via `exit(1)`, leaking the open file
-    handle and libpng structures. pngread.c has a goto-based cleanup
-    pattern but it is incomplete (e.g. `raster` may be used
-    uninitialized in the error path at line 92).
+9. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
+   which exits immediately via `exit(1)`, leaking the open file
+   handle and libpng structures. pngread.c has a goto-based cleanup
+   pattern but it is incomplete.
 
 ## Dependencies
 

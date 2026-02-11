@@ -63,6 +63,8 @@ Or run the build and tests manually via
 - Comments are C99 `//` style for inline, `/* */` for block headers
 - DocBook documentation is embedded in source file headers as
   structured comments
+- The build uses `-Wall -Wextra -Werror`: all warnings are errors.
+  New code must compile warning-free.
 
 ## Key Files
 
@@ -91,44 +93,37 @@ details.
 1. **pnginfo.c:324 -- text[1] should be text[i]**: Wrong array index
    in the text chunk compression type display. One-character fix.
 
-2. **pnginfo.c:205-219 -- uninitialized palette/transparency counts**:
-   Need to call `png_get_PLTE()` and `png_get_tRNS()` to populate
-   `num_palette` and `num_trans` before using them.
-
-3. **pngwrite.c:67 -- derive colour type from channels**: Replace the
+2. **pngwrite.c:67 -- derive colour type from channels**: Replace the
    hardcoded `PNG_COLOR_TYPE_RGB` with logic that maps channel count
    to the correct PNG colour type (1=gray, 2=gray+alpha, 3=RGB,
    4=RGBA).
 
-4. **pngcp.h type mismatch**: Align the width/height parameter types
+3. **pngcp.h type mismatch**: Align the width/height parameter types
    between the header (`unsigned long *`) and pngread.c's
    implementation (`png_uint_32 *`). Pick one and use it consistently.
 
-5. **inflateraster.c:31 -- error return value**: Change
-   `return (char *) -1` to `return NULL` so the caller's NULL check
-   in pngcp.c actually catches the error.
-
-6. **pngchunks.c:68 -- mmap error check**: Compare against
-   `MAP_FAILED` instead of `< 0`.
+4. **inflateraster.c:31 -- error return value**: Change
+   `return (png_byte *) -1` to `return NULL` so the caller's NULL
+   check in pngcp.c actually catches the error.
 
 ### Improvements Worth Making
 
-7. **Deduplicate the meanings table**: The chunk name case-meanings
+5. **Deduplicate the meanings table**: The chunk name case-meanings
    array is defined identically in pngchunkdesc.c and pngchunks.c.
    Extract it to a shared header or source file.
 
-9. **Check fread return values**: pnginfo.c:159 and pngread.c:28
+6. **Check fread return values**: pnginfo.c:159 and pngread.c:28
    ignore the return value of `fread()` when reading the PNG
    signature.
 
-10. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
-    `exit(1)` without cleanup. Consider restructuring to close files
-    and free libpng structures before exiting, or accept the leaks as
-    intentional for a short-lived CLI tool and document that decision.
+7. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
+   `exit(1)` without cleanup. Consider restructuring to close files
+   and free libpng structures before exiting, or accept the leaks as
+   intentional for a short-lived CLI tool and document that decision.
 
-11. **Fix inflateraster limitations**: The two `todo_mikal` items --
-    multi-byte sample support and combined bitdepth+channel changes --
-    have been outstanding for ~20 years.
+8. **Fix inflateraster limitations**: The two `todo_mikal` items --
+   multi-byte sample support and combined bitdepth+channel changes --
+   have been outstanding for ~20 years.
 
 ## Things to Be Careful About
 
