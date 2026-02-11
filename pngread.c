@@ -100,8 +100,7 @@ error:
   raster = NULL;
 
 cleanup:
-  if (row_pointers != NULL)
-    free(row_pointers);
+  free(row_pointers);
   png_read_end(png, NULL);
   fclose(image);
   png_destroy_read_struct(&png, &info, NULL);
