@@ -101,15 +101,13 @@ main(int argc, char *argv[])
                  ((pngchunks_IHDR *)offset)->colortype, ((pngchunks_IHDR *)offset)->compression,
                  ((pngchunks_IHDR *)offset)->filter, ((pngchunks_IHDR *)offset)->interlace);
 
-          switch (((pngchunks_IHDR *)offset)->compression)
+          if (((pngchunks_IHDR *)offset)->compression == 0)
             {
-            case 0:
               printf("  IHDR Compression algorithm is Deflate\n");
-              break;
-
-            default:
+            }
+          else
+            {
               printf("  IHDR Compression algorithm is unknown\n");
-              break;
             }
 
           if (((pngchunks_IHDR *)offset)->filter == 0)
