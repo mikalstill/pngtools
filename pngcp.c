@@ -34,7 +34,7 @@ DOCBOOK END
 void usage();
 
 int main(int argc, char *argv[]){
-  unsigned long width, height;
+  png_uint_32 width, height;
   int channels, targetchannels = -1, bitdepth, targetbitdepth = -1, optchar, i;
   png_byte *input, *output;
   

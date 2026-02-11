@@ -3,14 +3,14 @@
 
 #include <png.h>
 
-png_byte *readimage(char *filename, unsigned long *width, unsigned long *height,
+png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		      int *bitdepth, int *channels);
 
-int writeimage(char *filename, unsigned long width, unsigned long height,
+int writeimage(char *filename, png_uint_32 width, png_uint_32 height,
 		     int bitdepth, int channels, png_byte *raster);
 
-png_byte *inflateraster(png_byte *input, unsigned long width,
-		    unsigned long height,
+png_byte *inflateraster(png_byte *input, png_uint_32 width,
+		    png_uint_32 height,
 		    int bitdepth, int targetbitdepth,
 		    int channels, int targetchannels);
 #endif

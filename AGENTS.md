@@ -90,30 +90,26 @@ details.
 
 ### Bugs to Fix First
 
-1. **pngcp.h type mismatch**: Align the width/height parameter types
-   between the header (`unsigned long *`) and pngread.c's
-   implementation (`png_uint_32 *`). Pick one and use it consistently.
-
-2. **inflateraster.c:31 -- error return value**: Change
+1. **inflateraster.c:31 -- error return value**: Change
    `return (png_byte *) -1` to `return NULL` so the caller's NULL
    check in pngcp.c actually catches the error.
 
 ### Improvements Worth Making
 
-3. **Deduplicate the meanings table**: The chunk name case-meanings
+2. **Deduplicate the meanings table**: The chunk name case-meanings
    array is defined identically in pngchunkdesc.c and pngchunks.c.
    Extract it to a shared header or source file.
 
-4. **Check fread return values**: pnginfo.c:159 and pngread.c:28
+3. **Check fread return values**: pnginfo.c:159 and pngread.c:28
    ignore the return value of `fread()` when reading the PNG
    signature.
 
-5. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
+4. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
    `exit(1)` without cleanup. Consider restructuring to close files
    and free libpng structures before exiting, or accept the leaks as
    intentional for a short-lived CLI tool and document that decision.
 
-6. **Fix inflateraster limitations**: The two `todo_mikal` items --
+5. **Fix inflateraster limitations**: The two `todo_mikal` items --
    multi-byte sample support and combined bitdepth+channel changes --
    have been outstanding for ~20 years.
 

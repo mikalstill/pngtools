@@ -65,9 +65,8 @@ readimage() -> inflateraster() -> writeimage()
 ## Header Files
 
 - **pngcp.h**: Declares the three pngcp helper functions
-  (`readimage`, `writeimage`, `inflateraster`). Note: the width/height
-  parameter types here (`unsigned long *`) differ from the actual
-  implementation in pngread.c which uses `png_uint_32 *`.
+  (`readimage`, `writeimage`, `inflateraster`). Uses `png_uint_32`
+  for width/height to match the libpng API.
 
 ## Build System
 
@@ -132,39 +131,30 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ## Known Bugs and Issues
 
-### Critical
-
-1. **pngcp.h type mismatch**: The header declares
-   `readimage(..., unsigned long *width, unsigned long *height, ...)`
-   but the implementation in pngread.c uses `png_uint_32 *` for both.
-   On 64-bit systems where `unsigned long` is 8 bytes and
-   `png_uint_32` is 4 bytes, this is a type mismatch that could cause
-   memory corruption in pngcp.
-
 ### Moderate
 
-2. **inflateraster.c limitations**: Two `todo_mikal` comments note
+1. **inflateraster.c limitations**: Two `todo_mikal` comments note
    that bitdepth scaling only works for single-byte depths (line 48)
    and that simultaneous bitdepth + channel changes fail (line 55).
 
-3. **inflateraster.c:31 -- error sentinel**: On allocation failure,
+2. **inflateraster.c:31 -- error sentinel**: On allocation failure,
    returns `(png_byte *) -1` instead of NULL. The caller in pngcp.c
    checks for NULL, so this error path is never caught.
 
-4. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
+3. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
    offset to `long *` and dereferences it. Should use `int32_t *` or
    `uint32_t *` for portability and correctness.
 
-5. **Duplicated code**: The `meanings` lookup table for chunk name
+4. **Duplicated code**: The `meanings` lookup table for chunk name
    case decoding is defined identically in both pngchunkdesc.c and
    pngchunks.c.
 
 ### Minor
 
-6. **pnginfo.c:160 -- fread return unchecked**: The return value of
+5. **pnginfo.c:160 -- fread return unchecked**: The return value of
    `fread()` when reading the PNG signature is not checked.
 
-7. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
+6. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
    which exits immediately via `exit(1)`, leaking the open file
    handle and libpng structures. pngread.c has a goto-based cleanup
    pattern but it is incomplete.

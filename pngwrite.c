@@ -5,13 +5,13 @@
 #include <unistd.h>
 #include "pngcp.h"
 
-int writeimage(char *filename, unsigned long width, unsigned long height,
+int writeimage(char *filename, png_uint_32 width, png_uint_32 height,
 		      int bitdepth, int channels, png_byte *raster){
   FILE *image;
   png_structp png;
   png_infop info;
   png_bytepp row_pointers = NULL;
-  unsigned long i;
+  png_uint_32 i;
   int rowbytes;
 
   if((image = fopen(filename, "wb")) == NULL){

@@ -4,8 +4,8 @@
 #include <png.h>
 
 // Inflate a raster to a given pixel sample size
-png_byte *inflateraster(png_byte *input, unsigned long width,
-		    unsigned long height,
+png_byte *inflateraster(png_byte *input, png_uint_32 width,
+		    png_uint_32 height,
 		    int bitdepth, int targetbitdepth,
 		    int channels, int targetchannels){
   float scalefactor;
