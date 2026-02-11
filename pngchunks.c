@@ -11,6 +11,7 @@
 #include <math.h>
 #include <ctype.h>
 #include <arpa/inet.h>
+#include "chunk_meanings.h"
 
 void usage();
 
@@ -23,13 +24,6 @@ typedef struct pngchunks_internal_header
     char c[4];
   } type;
 } pngchunks_header;
-
-char *meanings[4][2] = {
-  {"Critical", "Ancillary"},
-  {"public", "private"},
-  {"PNG 1.2 compliant", "in reserved chunk space"},
-  {"unsafe to copy", "safe to copy"}
-};
 
 typedef struct pngchunks_internal_IHDR
 {
@@ -94,10 +88,10 @@ int main(int argc, char *argv[])
       offset += sizeof(pngchunks_header);
 
       printf ("  %s, %s, %s, %s\n",
-              isupper (head->type.c[0]) ? meanings[0][0] : meanings[0][1],
-              isupper (head->type.c[1]) ? meanings[1][0] : meanings[1][1],
-              isupper (head->type.c[2]) ? meanings[2][0] : meanings[2][1],
-              isupper (head->type.c[3]) ? meanings[3][0] : meanings[3][1]);
+              isupper (head->type.c[0]) ? chunk_meanings[0][0] : chunk_meanings[0][1],
+              isupper (head->type.c[1]) ? chunk_meanings[1][0] : chunk_meanings[1][1],
+              isupper (head->type.c[2]) ? chunk_meanings[2][0] : chunk_meanings[2][1],
+              isupper (head->type.c[3]) ? chunk_meanings[3][0] : chunk_meanings[3][1]);
 
       if(strncmp(head->type.c, "IHDR", 4) == 0)
 	{

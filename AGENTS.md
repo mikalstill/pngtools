@@ -78,6 +78,7 @@ Or run the build and tests manually via
 | pngwrite.c        | PNG writing helper (writeimage)              |
 | inflateraster.c   | Raster bitdepth/channel transformation       |
 | pngcp.h           | Header for pngcp helper functions            |
+| chunk_meanings.h  | Shared chunk name case-bit meanings table     |
 | configure.ac      | Autoconf configuration                       |
 | Makefile.am       | Automake build rules                         |
 | man/*.sgml        | DocBook SGML man page sources                |
@@ -90,16 +91,12 @@ details.
 
 ### Improvements Worth Making
 
-1. **Deduplicate the meanings table**: The chunk name case-meanings
-   array is defined identically in pngchunkdesc.c and pngchunks.c.
-   Extract it to a shared header or source file.
-
-2. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
+1. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
    `exit(1)` without cleanup. Consider restructuring to close files
    and free libpng structures before exiting, or accept the leaks as
    intentional for a short-lived CLI tool and document that decision.
 
-3. **Fix inflateraster limitations**: The two `todo_mikal` items --
+2. **Fix inflateraster limitations**: The two `todo_mikal` items --
    multi-byte sample support and combined bitdepth+channel changes --
    have been outstanding for ~20 years.
 
