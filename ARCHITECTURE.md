@@ -84,16 +84,29 @@ GNU Autotools (autoconf + automake):
 Build steps: `aclocal && autoconf && automake --add-missing &&
 autoreconf && ./configure && make`
 
+## Code Quality
+
+- **clang-format**: Enforces consistent formatting using the GNU
+  base style. Configuration in `.clang-format`. Run
+  `scripts/check-format.sh fix` to auto-format, or
+  `scripts/check-format.sh` to check without modifying.
+
+- **cppcheck**: Static analysis for warnings and style issues.
+  Runs with `--enable=warning,style` in both CI and pre-commit.
+
 ## CI
 
-GitHub Actions (`.github/workflows/c.yml`): builds on Ubuntu with
-libpng-dev and docbook-utils. Runs the full autotools chain,
-configure, make, and make install to a staging directory. Then
-sets up a Python venv, installs test dependencies, generates test
-images, and runs the full test suite via stestr.
+GitHub Actions (`.github/workflows/c.yml`): runs clang-format and
+cppcheck checks first, then builds on Ubuntu with libpng-dev and
+docbook-utils. Runs the full autotools chain, configure, make,
+and make install to a staging directory. Then sets up a Python
+venv, installs test dependencies, generates test images, and runs
+the full test suite via stestr.
 
-A pre-commit hook (`scripts/build-and-test.sh`) runs the same
-build-and-test cycle locally before each commit.
+Three pre-commit hooks run automatically before each commit:
+1. **clang-format** -- checks source formatting
+2. **cppcheck** -- static analysis
+3. **build-and-test** -- full build and test cycle
 
 ## Test Data
 
@@ -132,15 +145,12 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ## Known Bugs and Issues
 
-### Moderate
-
-1. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
-   offset to `long *` and dereferences it. Should use `int32_t *` or
-   `uint32_t *` for portability and correctness.
-
+No known bugs.
 
 ## Dependencies
 
 - **libpng** (required): PNG reading/writing for pnginfo, pngcp
 - **libm** (required): math functions for pngcp (pow in inflateraster)
 - **docbook-utils** (optional): man page generation from SGML sources
+- **clang-format** (development): code formatting enforcement
+- **cppcheck** (development): static analysis

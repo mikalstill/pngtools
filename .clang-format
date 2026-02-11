@@ -1,0 +1,9 @@
+BasedOnStyle: GNU
+IndentWidth: 2
+TabWidth: 8
+UseTab: Never
+ColumnLimit: 100
+SortIncludes: false
+SpaceBeforeParens: ControlStatements
+PointerAlignment: Right
+ReflowComments: false

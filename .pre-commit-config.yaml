@@ -1,6 +1,19 @@
 repos:
   - repo: local
     hooks:
+      - id: clang-format
+        name: clang-format
+        entry: scripts/check-format.sh
+        language: system
+        always_run: true
+        pass_filenames: false
+
+      - id: cppcheck
+        name: cppcheck
+        entry: cppcheck --error-exitcode=1 --enable=warning,style --suppress=missingIncludeSystem --suppress=normalCheckLevelMaxBranches
+        language: system
+        types: [c]
+
       - id: build-and-test
         name: build and test
         entry: scripts/build-and-test.sh

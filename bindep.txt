@@ -17,3 +17,8 @@ docbook-style-dsssl [platform:rpm]
 
 docbook-utils [platform:dpkg]
 docbook-utils [platform:rpm]
+
+clang-format [platform:dpkg]
+clang-tools-extra [platform:rpm]
+
+cppcheck
