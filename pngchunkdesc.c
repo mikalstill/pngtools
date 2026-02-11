@@ -22,17 +22,13 @@ DOCBOOK END
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-
-char *meanings[4][2] = {
-  {"Critical", "Ancillary"},
-  {"public", "private"},
-  {"PNG 1.2 compliant", "in reserved chunk space"},
-  {"unsafe to copy", "safe to copy"}
-};
+#include "chunk_meanings.h"
 
 int
 main (int argc, char *argv[])
 {
+  (void)argc;
+  (void)argv;
   char s[200];
 
   while (fgets (s, 200, stdin) != NULL)
@@ -40,9 +36,9 @@ main (int argc, char *argv[])
       s[strlen (s) - 1] = '\0';
       printf ("%s: %s, %s, %s, %s\n",
 	      s,
-	      isupper (s[0]) ? meanings[0][0] : meanings[0][1],
-	      isupper (s[1]) ? meanings[1][0] : meanings[1][1],
-	      isupper (s[2]) ? meanings[2][0] : meanings[2][1],
-	      isupper (s[3]) ? meanings[3][0] : meanings[3][1]);
+	      isupper (s[0]) ? chunk_meanings[0][0] : chunk_meanings[0][1],
+	      isupper (s[1]) ? chunk_meanings[1][0] : chunk_meanings[1][1],
+	      isupper (s[2]) ? chunk_meanings[2][0] : chunk_meanings[2][1],
+	      isupper (s[3]) ? chunk_meanings[3][0] : chunk_meanings[3][1]);
     }
 }

@@ -4,18 +4,18 @@
 #include <png.h>
 #include <unistd.h>
 
-char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
+png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		int *bitdepth, int *channels);
 
-char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height, 
+png_byte *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
 		      int *bitdepth, int *channels){
   FILE *image;
-  png_uint_32 i, j, rowbytes;
-  png_structp png;
+  png_uint_32 i, rowbytes;
+  png_structp png = NULL;
   png_infop info;
-  png_bytepp row_pointers = NULL;
+  png_bytepp volatile row_pointers = NULL;
   unsigned char sig[8];
-  char *raster;
+  png_byte * volatile raster = NULL;
   int colourtype;
 
   // Open the file
@@ -25,8 +25,8 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   }
 
   // Check that it really is a PNG file
-  fread(sig, 1, 8, image);
-  if(!png_sig_cmp(sig, 0, 8) == 0){
+  if(fread(sig, 1, 8, image) != 8 ||
+     !png_sig_cmp(sig, 0, 8) == 0){
     fprintf(stderr, "This file is not a valid PNG file\n");
     goto error;
   }
@@ -68,6 +68,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   // palette is correctly reported...
   //png_set_strip_alpha (png);
   png_read_update_info (png, info);
+  *bitdepth = png_get_bit_depth(png, info);
   *channels = png_get_channels(png, info);
   
   rowbytes = png_get_rowbytes (png, info);
@@ -77,7 +78,7 @@ char *readimage(char *filename, png_uint_32 *width, png_uint_32 *height,
   }
 
   // Space for the bitmap
-  if((raster = (unsigned char *) malloc ((rowbytes * *height) + 1)) == NULL){
+  if((raster = malloc ((rowbytes * *height) + 1)) == NULL){
     fprintf(stderr, "Could not allocate memory\n");
     goto error;
   }

@@ -1,0 +1,4 @@
+testtools
+stestr
+fixtures
+Pillow

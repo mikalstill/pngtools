@@ -1,0 +1,19 @@
+# This is a cross-platform list tracking distribution packages needed to build
+# pngtools; see https://docs.opendev.org/opendev/bindep/ for additional
+# information.
+
+build-essential [platform:dpkg]
+gcc [platform:rpm]
+make [platform:rpm]
+
+autoconf
+automake
+
+libpng-dev [platform:dpkg]
+libpng-devel [platform:rpm]
+
+docbook [platform:dpkg]
+docbook-style-dsssl [platform:rpm]
+
+docbook-utils [platform:dpkg]
+docbook-utils [platform:rpm]

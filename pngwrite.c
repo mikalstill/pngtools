@@ -5,13 +5,14 @@
 #include <unistd.h>
 #include "pngcp.h"
 
-int writeimage(char *filename, unsigned long width, unsigned long height, 
-		      int bitdepth, int channels, char *raster){
+int writeimage(char *filename, png_uint_32 width, png_uint_32 height,
+		      int bitdepth, int channels, png_byte *raster){
   FILE *image;
   png_structp png;
   png_infop info;
   png_bytepp row_pointers = NULL;
-  int i, rowbytes;
+  png_uint_32 i;
+  int rowbytes;
 
   if((image = fopen(filename, "wb")) == NULL){
     fprintf(stderr, "Could not open the output image\n");
@@ -60,11 +61,29 @@ int writeimage(char *filename, unsigned long width, unsigned long height,
   // This is needed before IO will work (unless you define callbacks)
   png_init_io(png, image);
 
-  // We need to derive a PNG color type from the number of channels and bitdepth
-  
+  // Derive the PNG color type from the number of channels
+  int colourtype;
+  switch (channels) {
+  case 1:
+    colourtype = PNG_COLOR_TYPE_GRAY;
+    break;
+  case 2:
+    colourtype = PNG_COLOR_TYPE_GRAY_ALPHA;
+    break;
+  case 3:
+    colourtype = PNG_COLOR_TYPE_RGB;
+    break;
+  case 4:
+    colourtype = PNG_COLOR_TYPE_RGB_ALPHA;
+    break;
+  default:
+    fprintf(stderr, "Unsupported channel count: %d\n", channels);
+    fclose(image);
+    return -1;
+  }
 
   // Define important stuff about the image
-  png_set_IHDR (png, info, width, height, bitdepth, PNG_COLOR_TYPE_RGB,
+  png_set_IHDR (png, info, width, height, bitdepth, colourtype,
                 PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_DEFAULT,
                 PNG_FILTER_TYPE_DEFAULT);
   png_write_info (png, info);

@@ -12,8 +12,7 @@
      (c) Michael Still, 2001
 -->
 
-<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook SGML V4.4//EN"
-   "http://www.oasis-open.org/docbook/sgml/4.4/docbook.dtd">
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook V4.4//EN">
 <refentry id="pngchunkdesc">
 <refmeta>
 <refentrytitle>pngchunks</refentrytitle>

@@ -1,5 +1,7 @@
 SUBDIRS = man
 
+AM_CFLAGS = -Wall -Wextra -Werror
+
 bin_PROGRAMS = pnginfo pngcp pngchunkdesc pngchunks
 
 pnginfo_SOURCES = pnginfo.c

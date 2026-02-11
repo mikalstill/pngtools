@@ -1,0 +1,42 @@
+# Compiled binaries and objects
+pnginfo
+pngcp
+pngchunks
+pngchunkdesc
+*.o
+
+# Autotools generated files
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.h
+config.h.in
+config.log
+config.status
+configure
+configure~
+stamp-h1
+.deps/
+config/compile
+config/config.guess
+config/config.sub
+config/depcomp
+config/install-sh
+config/ltmain.sh
+config/missing
+config/mkinstalldirs
+
+# Test infrastructure
+tests/.venv/
+tests/__pycache__/
+__pycache__/
+.stestr/
+testdata/
+
+# Generated man pages
+man/Makefile
+man/Makefile.in
+man/*.1
+man/*.8
+man/manpage.*

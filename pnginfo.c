@@ -78,8 +78,6 @@ DOCBOOK END
 #include <unistd.h>
 
 void pnginfo_displayfile (char *, int, int, int);
-void pnginfo_error (char *);
-void *pnginfo_xmalloc (size_t);
 void usage (void);
 
 #define pnginfo_true 1
@@ -136,43 +134,49 @@ main (int argc, char *argv[])
 void
 pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int tiffnames)
 {
-  FILE *image;
+  FILE * volatile image = NULL;
   png_uint_32 width, height;
-  unsigned long imageBufSize, runlen;
-  unsigned char signature;
+  unsigned long runlen;
   int bitdepth, colourtype;
   png_uint_32 i, j, rowbytes;
-  png_structp png;
-  png_infop info;
+  png_structp png = NULL;
+  png_infop info = NULL;
   unsigned char sig[8];
-  png_bytepp row_pointers = NULL;
-  char *bitmap;
+  png_bytepp volatile row_pointers = NULL;
+  png_byte * volatile bitmap = NULL;
 
   printf ("%s%s...\n", filename, \
 	  tiffnames == pnginfo_true? " (tiffinfo compatible labels)" : "");
 
   // Open the file
-  if ((image = fopen (filename, "rb")) == NULL)
-    pnginfo_error ("Could not open the specified PNG file.");
+  if ((image = fopen (filename, "rb")) == NULL){
+    fprintf (stderr, "Could not open the specified PNG file.\n");
+    goto error;
+  }
 
   // Check that it really is a PNG file
-  fread (sig, 1, 8, image);
-  if (!png_sig_cmp(sig, 0, 8) == 0)
-    pnginfo_error ("This file is not a valid PNG file.");
+  if(fread(sig, 1, 8, image) != 8 ||
+     !png_sig_cmp(sig, 0, 8) == 0){
+    fprintf (stderr, "This file is not a valid PNG file.\n");
+    goto error;
+  }
 
   // Start decompressing
   if ((png = png_create_read_struct (PNG_LIBPNG_VER_STRING, NULL,
-				     NULL, NULL)) == NULL)
-    pnginfo_error ("Could not create a PNG read structure (out of memory?)");
+				     NULL, NULL)) == NULL){
+    fprintf (stderr, "Could not create a PNG read structure (out of memory?)\n");
+    goto error;
+  }
 
-  if ((info = png_create_info_struct (png)) == NULL)
-    pnginfo_error ("Could not create PNG info structure (out of memory?)");
+  if ((info = png_create_info_struct (png)) == NULL){
+    fprintf (stderr, "Could not create PNG info structure (out of memory?)\n");
+    goto error;
+  }
 
-  // If pnginfo_error did not exit, we would have to call 
-  // png_destroy_read_struct
-
-  if (setjmp (png_jmpbuf (png)))
-    pnginfo_error ("Could not set PNG jump value");
+  if (setjmp (png_jmpbuf (png))){
+    fprintf (stderr, "Could not set PNG jump value\n");
+    goto error;
+  }
 
   // Get ready for IO and tell the API we have already read the image signature
   png_init_io (png, image);
@@ -202,8 +206,9 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   // Photometric interp packs a lot of information
   printf ("  Colour Type (Photometric Interpretation): ");
 
-  int num_palette;
-  int num_trans;
+  int num_palette = 0;
+  int num_trans = 0;
+  png_colorp palette;
 
   switch (colourtype)
     {
@@ -213,10 +218,16 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
     case PNG_COLOR_TYPE_PALETTE:
       printf ("PALETTED COLOUR ");
-      if (num_trans > 0)
-	printf ("with alpha ");
-      printf ("(%d colours, %d transparent) ",
-	      num_palette, num_trans);
+      if (PNG_INFO_PLTE == png_get_PLTE(png, info, &palette, &num_palette)) {
+        png_bytep trans;
+        png_color_16p trans_values;
+        if (PNG_INFO_tRNS == png_get_tRNS(png, info, &trans, &num_trans, &trans_values)){
+          if (num_trans > 0)
+            printf ("with alpha ");
+        }
+        printf ("(%d colours, %d transparent) ",
+                num_palette, num_trans);
+      }
       break;
 
     case PNG_COLOR_TYPE_RGB:
@@ -284,8 +295,8 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
     }
   printf ("\n");
 
-  png_uint_32 x_pixels_per_unit, y_pixels_per_unit;
-  int phys_unit_type;
+  png_uint_32 x_pixels_per_unit = 0, y_pixels_per_unit = 0;
+  int phys_unit_type = PNG_RESOLUTION_UNKNOWN;
   png_get_pHYs (png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type);
 
   printf ("  Resolution: %d, %d ",
@@ -310,18 +321,18 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
   printf ("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
 
   png_textp text;
-  int num_text;
+  int num_text, ti;
   num_text=png_get_text(png,info,&text,NULL);
 
   // Text comments
   printf ("  Number of text strings: %d\n",
 	  num_text);
 
-  for (i = 0; i < num_text; i++)
+  for (ti = 0; ti < num_text; ti++)
     {
-      printf ("    %s ", text[i].key);
+      printf ("    %s ", text[ti].key);
 
-      switch (text[1].compression)
+      switch (text[ti].compression)
 	{
 	case -1:
 	  printf ("(tEXt uncompressed)");
@@ -346,12 +357,12 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 
       printf (": ");
       j = 0;
-      while (text[i].text[j] != '\0')
+      while (text[ti].text[j] != '\0')
 	{
-	  if (text[i].text[j] == '\n')
+	  if (text[ti].text[j] == '\n')
 	    printf ("\\n");
 	  else
-	    fputc (text[i].text[j], stdout);
+	    fputc (text[ti].text[j], stdout);
 
 	  j++;
 	}
@@ -378,14 +389,19 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
       png_read_update_info (png, info);
 
       rowbytes = png_get_rowbytes (png, info);
-      bitmap = (unsigned char *) pnginfo_xmalloc ((rowbytes * height) + 1);
-      row_pointers = pnginfo_xmalloc (height * sizeof (png_bytep));
+      if((bitmap = malloc ((rowbytes * height) + 1)) == NULL){
+	fprintf (stderr, "Could not allocate memory for bitmap\n");
+	goto error;
+      }
+      if((row_pointers = malloc (height * sizeof (png_bytep))) == NULL){
+	fprintf (stderr, "Could not allocate memory for row pointers\n");
+	goto error;
+      }
 
       // Get the image bitmap
       for (i = 0; i < height; ++i)
 	row_pointers[i] = bitmap + (i * rowbytes);
       png_read_image (png, row_pointers);
-      free (row_pointers);
       png_read_end (png, NULL);
 
       // Do we want to display this bitmap?
@@ -454,36 +470,26 @@ pnginfo_displayfile (char *filename, int extractBitmap, int displayBitmap, int t
 	}
     }
 
-  // This cleans things up for us in the PNG library
+  // Normal cleanup path
+  free (row_pointers);
+  free (bitmap);
   fclose (image);
   png_destroy_read_struct (&png, &info, NULL);
-}
+  return;
 
-// You can bang or head or you can drown in a hole
-//                                                    -- Vanessa Amarosi, Shine
-void
-pnginfo_error (char *message)
-{
-  fprintf (stderr, "%s\n", message);
+ error:
+  free (row_pointers);
+  free (bitmap);
+  if (image != NULL)
+    fclose (image);
+  if (png != NULL)
+    png_destroy_read_struct (&png, &info, NULL);
   exit (1);
-}
-
-// Allocate some memory
-void *
-pnginfo_xmalloc (size_t size)
-{
-  void *buffer;
-
-  if ((buffer = malloc (size)) == NULL)
-    {
-      pnginfo_error ("pnginfo_xmalloc failed to allocate memory");
-    }
-
-  return buffer;
 }
 
 void
 usage ()
 {
-  pnginfo_error ("Usage: pnginfo [-d] [-D] <filenames>");
+  fprintf (stderr, "Usage: pnginfo [-d] [-D] <filenames>\n");
+  exit (1);
 }
