@@ -88,28 +88,22 @@ These are the most impactful bugs and improvements, roughly ordered
 by severity. See ARCHITECTURE.md "Known Bugs and Issues" for full
 details.
 
-### Bugs to Fix First
-
-1. **inflateraster.c:31 -- error return value**: Change
-   `return (png_byte *) -1` to `return NULL` so the caller's NULL
-   check in pngcp.c actually catches the error.
-
 ### Improvements Worth Making
 
-2. **Deduplicate the meanings table**: The chunk name case-meanings
+1. **Deduplicate the meanings table**: The chunk name case-meanings
    array is defined identically in pngchunkdesc.c and pngchunks.c.
    Extract it to a shared header or source file.
 
-3. **Check fread return values**: pnginfo.c:159 and pngread.c:28
+2. **Check fread return values**: pnginfo.c:159 and pngread.c:28
    ignore the return value of `fread()` when reading the PNG
    signature.
 
-4. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
+3. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
    `exit(1)` without cleanup. Consider restructuring to close files
    and free libpng structures before exiting, or accept the leaks as
    intentional for a short-lived CLI tool and document that decision.
 
-5. **Fix inflateraster limitations**: The two `todo_mikal` items --
+4. **Fix inflateraster limitations**: The two `todo_mikal` items --
    multi-byte sample support and combined bitdepth+channel changes --
    have been outstanding for ~20 years.
 

@@ -30,7 +30,7 @@ png_byte *inflateraster(png_byte *input, png_uint_32 width,
   // Build the output raster
   if((output = malloc(width * height * targetchannels * targetbytedepth)) == NULL){
     fprintf(stderr, "Failed to allocate enough memory for output raster\n");
-    return (png_byte *) -1;
+    return NULL;
   }
 
   // Are we changing the bitdepth?
