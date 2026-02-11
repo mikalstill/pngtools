@@ -94,16 +94,12 @@ details.
    array is defined identically in pngchunkdesc.c and pngchunks.c.
    Extract it to a shared header or source file.
 
-2. **Check fread return values**: pnginfo.c:159 and pngread.c:28
-   ignore the return value of `fread()` when reading the PNG
-   signature.
-
-3. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
+2. **Fix resource leaks**: pnginfo.c's `pnginfo_error()` calls
    `exit(1)` without cleanup. Consider restructuring to close files
    and free libpng structures before exiting, or accept the leaks as
    intentional for a short-lived CLI tool and document that decision.
 
-4. **Fix inflateraster limitations**: The two `todo_mikal` items --
+3. **Fix inflateraster limitations**: The two `todo_mikal` items --
    multi-byte sample support and combined bitdepth+channel changes --
    have been outstanding for ~20 years.
 

@@ -147,10 +147,7 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ### Minor
 
-4. **pnginfo.c:160 -- fread return unchecked**: The return value of
-   `fread()` when reading the PNG signature is not checked.
-
-5. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
+4. **Resource leaks on error**: pnginfo.c calls `pnginfo_error()`
    which exits immediately via `exit(1)`, leaking the open file
    handle and libpng structures. pngread.c has a goto-based cleanup
    pattern but it is incomplete.
