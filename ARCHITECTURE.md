@@ -23,7 +23,7 @@ resolution, and embedded text chunks. Has three modes:
 The bitmap dump includes run-length compression for zero-valued
 pixels, printing them once and then showing a repeat count.
 
-### pngchunks (pngchunks.c, ~180 lines)
+### pngchunks (pngchunks.c, ~190 lines)
 
 Lists the raw chunk structure of a PNG file. Unlike pnginfo, this tool
 does **not** use libpng -- it memory-maps the file with `mmap()` and
@@ -31,7 +31,8 @@ manually walks the PNG chunk linked list by parsing the 8-byte chunk
 headers (4-byte length + 4-byte type). For IHDR chunks it also parses
 and displays the IHDR payload fields. Each chunk's four-character name
 is decoded to show its case-encoded properties (critical/ancillary,
-public/private, etc.).
+public/private, etc.). All pointer advances are bounds-checked against
+the mmap'd region to prevent segfaults on malformed input.
 
 ### pngchunkdesc (pngchunkdesc.c, ~48 lines)
 
@@ -167,7 +168,9 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ## Known Bugs and Issues
 
-No known bugs.
+- **Issue #3**: No release tags exist on the GitHub repository.
+  Downstream packagers have requested at least a `0.4` and `1.0`
+  tag. This is a release management task, not a code bug.
 
 ## Dependencies
 
