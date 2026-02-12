@@ -1,6 +1,10 @@
 repos:
   - repo: local
     hooks:
+      # Note: actionlint and shellcheck run in separate pre-commit
+      # environments (golang vs python), so actionlint cannot use
+      # shellcheck to lint inline 'run:' scripts in workflows here.
+      # CI catches those issues because both are system-installed.
       - id: actionlint
         name: actionlint
         entry: actionlint
