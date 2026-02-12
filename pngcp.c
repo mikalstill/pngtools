@@ -4,7 +4,7 @@
 #include <math.h>
 #include "pngcp.h"
 
-void usage();
+static void usage(void);
 
 int
 main(int argc, char *argv[])
@@ -67,8 +67,8 @@ main(int argc, char *argv[])
     }
 }
 
-void
-usage()
+static void
+usage(void)
 {
   fprintf(stderr, "Usage: pngcp [-d <target bitdepth>] [-s <target samples per pixel>] <input "
                   "filename> <output filename>\n");

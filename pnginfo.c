@@ -4,8 +4,8 @@
 #include <png.h>
 #include <unistd.h>
 
-void pnginfo_displayfile(const char *, int, int, int);
-void usage(void);
+static void pnginfo_displayfile(const char *, int, int, int);
+static void usage(void);
 
 #define pnginfo_true 1
 #define pnginfo_false 0
@@ -58,7 +58,7 @@ main(int argc, char *argv[])
   return 0;
 }
 
-void
+static void
 pnginfo_displayfile(const char *filename, int extractBitmap, int displayBitmap, int tiffnames)
 {
   FILE *volatile image = NULL;
@@ -82,7 +82,7 @@ pnginfo_displayfile(const char *filename, int extractBitmap, int displayBitmap, 
     }
 
   // Check that it really is a PNG file
-  if (fread(sig, 1, 8, image) != 8 || !png_sig_cmp(sig, 0, 8) == 0)
+  if (fread(sig, 1, 8, image) != 8 || png_sig_cmp(sig, 0, 8) != 0)
     {
       fprintf(stderr, "This file is not a valid PNG file.\n");
       goto error;
@@ -425,8 +425,8 @@ error:
   exit(1);
 }
 
-void
-usage()
+static void
+usage(void)
 {
   fprintf(stderr, "Usage: pnginfo [-d] [-D] <filenames>\n");
   exit(1);

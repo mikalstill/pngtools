@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 #include "chunk_meanings.h"
 
-void usage();
+static void usage(void);
 
 const char magic[] = { 137, 'P', 'N', 'G', '\r', '\n', 26, '\n' };
 typedef struct pngchunks_internal_header
@@ -41,6 +41,7 @@ int
 main(int argc, char *argv[])
 {
   char *data, *offset;
+  const char *data_end;
   int fd, lastchunk;
   struct stat stat;
 
@@ -67,9 +68,10 @@ main(int argc, char *argv[])
     }
 
   offset = data;
+  data_end = data + stat.st_size;
 
   // Check that the file is a PNG file
-  if (memcmp(magic, offset, 8) != 0)
+  if (stat.st_size < 8 || memcmp(magic, offset, 8) != 0)
     {
       fprintf(stderr, "This is not a PNG file...\n");
       exit(1);
@@ -80,8 +82,14 @@ main(int argc, char *argv[])
   lastchunk = 0;
   while (!lastchunk)
     {
+      if (offset + sizeof(pngchunks_header) > data_end)
+        {
+          fprintf(stderr, "Truncated chunk header\n");
+          exit(1);
+        }
       pngchunks_header *head = (pngchunks_header *)offset;
-      printf("Chunk: Data Length %u (max %u), Type %d [%c%c%c%c]\n", ntohl(head->len),
+      uint32_t chunk_len = ntohl(head->len);
+      printf("Chunk: Data Length %u (max %u), Type %d [%c%c%c%c]\n", chunk_len,
              (unsigned int)pow(2, 31) - 1, head->type.i, head->type.c[0], head->type.c[1],
              head->type.c[2], head->type.c[3]);
       offset += sizeof(pngchunks_header);
@@ -94,6 +102,11 @@ main(int argc, char *argv[])
 
       if (strncmp(head->type.c, "IHDR", 4) == 0)
         {
+          if (offset + sizeof(pngchunks_IHDR) > data_end)
+            {
+              fprintf(stderr, "Truncated IHDR chunk\n");
+              exit(1);
+            }
           printf("  IHDR Width: %d\n  IHDR Height: %d\n  IHDR Bitdepth: %d\n  IHDR Colortype: %d\n "
                  " IHDR Compression: %d\n  IHDR Filter: %d\n  IHDR Interlace: %d\n",
                  ntohl(((pngchunks_IHDR *)offset)->width),
@@ -148,7 +161,12 @@ main(int argc, char *argv[])
           printf("  ... Unknown chunk type\n");
         }
 
-      offset += ntohl(head->len);
+      if (offset + chunk_len + 4 > data_end)
+        {
+          fprintf(stderr, "Chunk data extends beyond end of file\n");
+          exit(1);
+        }
+      offset += chunk_len;
       printf("  Chunk CRC: %u\n", ntohl(*((uint32_t *)offset)));
       offset += 4;
     }
@@ -161,8 +179,8 @@ main(int argc, char *argv[])
     }
 }
 
-void
-usage()
+static void
+usage(void)
 {
   fprintf(stderr, "Usage: pngchunks <filename>\n");
   exit(1);

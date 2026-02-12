@@ -85,7 +85,7 @@ Or run individual checks manually:
 | chunk_meanings.h  | Shared chunk name case-bit meanings table     |
 | configure.ac      | Autoconf configuration                       |
 | Makefile.am       | Automake build rules                         |
-| man/*.sgml        | DocBook SGML man page sources                |
+| man/*.sgml.in     | DocBook SGML man page templates               |
 
 ## Things to Be Careful About
 
@@ -102,9 +102,10 @@ Or run individual checks manually:
   Be especially careful with endianness (uses `ntohl`) and struct
   packing assumptions when modifying this code.
 
-- **DocBook man pages live in man/*.sgml.** If you change a tool's
-  command-line interface or behaviour, update the corresponding SGML
-  man page source as well.
+- **DocBook man pages live in man/*.sgml.in.** These are templates
+  processed by `configure` to substitute `@PACKAGE_VERSION@`. If
+  you change a tool's command-line interface or behaviour, update
+  the corresponding `.sgml.in` man page template as well.
 
 - **CI runs the full test suite.** The GitHub Actions CI workflow
   builds the project and runs all 53 tests. A separate CodeQL
