@@ -13,7 +13,7 @@
 #include <arpa/inet.h>
 #include "chunk_meanings.h"
 
-void usage();
+static void usage(void);
 
 const char magic[] = { 137, 'P', 'N', 'G', '\r', '\n', 26, '\n' };
 typedef struct pngchunks_internal_header
@@ -161,8 +161,8 @@ main(int argc, char *argv[])
     }
 }
 
-void
-usage()
+static void
+usage(void)
 {
   fprintf(stderr, "Usage: pngchunks <filename>\n");
   exit(1);

@@ -10,9 +10,11 @@ main(int argc, char *argv[])
   (void)argv;
   char s[200];
 
-  while (fgets(s, 200, stdin) != NULL)
+  while (fgets(s, sizeof(s), stdin) != NULL)
     {
-      s[strlen(s) - 1] = '\0';
+      size_t len = strlen(s);
+      if (len > 0 && s[len - 1] == '\n')
+        s[len - 1] = '\0';
       printf("%s: %s, %s, %s, %s\n", s, isupper(s[0]) ? chunk_meanings[0][0] : chunk_meanings[0][1],
              isupper(s[1]) ? chunk_meanings[1][0] : chunk_meanings[1][1],
              isupper(s[2]) ? chunk_meanings[2][0] : chunk_meanings[2][1],
