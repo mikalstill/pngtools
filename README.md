@@ -81,13 +81,21 @@ Or use the all-in-one script that handles building and testing
 scripts/build-and-test.sh
 ```
 
-### Pre-commit Hook
+### Pre-commit Hooks
 
-To automatically build and test before each commit:
+Pre-commit hooks enforce formatting (clang-format), static
+analysis (cppcheck), and run the full build-and-test cycle:
 
 ```bash
 pip install pre-commit
 pre-commit install
+```
+
+You can also run the format checker directly:
+
+```bash
+scripts/check-format.sh       # check only
+scripts/check-format.sh fix   # auto-format in place
 ```
 
 ## Documentation

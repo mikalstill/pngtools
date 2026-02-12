@@ -42,27 +42,31 @@ repo root plus generated images in `testdata/`.
 When making changes, run the full test suite. If adding new
 features or fixing bugs, add corresponding tests.
 
-A pre-commit hook runs the full build-and-test cycle
-automatically. Set it up with:
+Pre-commit hooks run actionlint, shellcheck, clang-format,
+cppcheck, and the full build-and-test cycle automatically.
+Set them up with:
 
 ```bash
 pip install pre-commit
 pre-commit install
 ```
 
-Or run the build and tests manually via
-`scripts/build-and-test.sh`.
+Or run individual checks manually:
+- `scripts/check-format.sh` -- verify formatting
+- `scripts/check-format.sh fix` -- auto-format
+- `scripts/build-and-test.sh` -- build and test
 
 ## Code Style
 
 - C with GNU Autotools conventions
-- Indentation is a mix of tabs and spaces (historical; GNU style with
-  tabs for primary indentation, two-space offsets for continuation)
+- All source files are formatted with **clang-format** (GNU base
+  style). Run `scripts/check-format.sh fix` to auto-format. The
+  config is in `.clang-format`.
+- **cppcheck** is used for static analysis. New code must pass
+  `cppcheck --enable=warning,style` without findings.
 - Functions use `snake_case` with tool-name prefixes (e.g.
   `pnginfo_displayfile`)
 - Comments are C99 `//` style for inline, `/* */` for block headers
-- DocBook documentation is embedded in source file headers as
-  structured comments
 - The build uses `-Wall -Wextra -Werror`: all warnings are errors.
   New code must compile warning-free.
 
@@ -102,5 +106,7 @@ Or run the build and tests manually via
   command-line interface or behaviour, update the corresponding SGML
   man page source as well.
 
-- **CI runs the full test suite.** The GitHub Actions workflow
-  builds the project and runs all 53 tests. PRs must pass CI.
+- **CI runs the full test suite.** The GitHub Actions CI workflow
+  builds the project and runs all 53 tests. A separate CodeQL
+  workflow performs security and quality analysis. PRs must pass
+  both CI checks.

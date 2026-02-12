@@ -37,6 +37,7 @@ testdata/
 # Generated man pages
 man/Makefile
 man/Makefile.in
+man/*.sgml
 man/*.1
 man/*.8
 man/manpage.*

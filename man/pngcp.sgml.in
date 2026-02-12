@@ -17,6 +17,9 @@
 <refmeta>
 <refentrytitle>pngcp</refentrytitle>
 <manvolnum>1</manvolnum>
+<refmiscinfo class="source">pngtools</refmiscinfo>
+<refmiscinfo class="version">@PACKAGE_VERSION@</refmiscinfo>
+<refmiscinfo class="manual">User Commands</refmiscinfo>
 </refmeta>
 
 <refnamediv>
@@ -61,21 +64,21 @@ pngcp toucan.png new.png
 <refsect1>
     <title>VERSION</title>
     <para>
-This documentation was generated for <command>pngtools</command> 0.2 by <command>autodocbook</command> (http://www.stillhq.com).
+This documentation is for <command>pngtools</command> @PACKAGE_VERSION@.
     </para>
 </refsect1>
 
 <refsect1>
     <title>AUTHOR</title>
     <para>
-<command>pngtools</command> is under development by Michael Still (mikal@stillhq.com). All code is Copyright Michael Still 2001 to 2003,  and is released under the GNU GPL. Code submissions are welcomed. Contact Michael at the address above if you have something you would like to contribute.
+<command>pngtools</command> was written by Michael Still and is released under the GNU GPL. The project is hosted at https://github.com/mikalstill/pngtools.
 </para>
 </refsect1>
 
 <refsect1>
     <title>BUGS</title>
     <para>
-There  are no known bugs in <command>pngtools</command>. If you find one, please contact mikal@stillhq.com and let me know.
+Please report bugs at https://github.com/mikalstill/pngtools/issues.
 </para>
 </refsect1>
 </refentry>

@@ -78,22 +78,57 @@ GNU Autotools (autoconf + automake):
 - **Makefile.am**: Builds four binaries. pnginfo and pngchunks are
   standalone; pngcp links pngread.c, pngwrite.c, and inflateraster.c.
   pngcp additionally links libm.
-- **man/**: DocBook SGML man page sources, built to man pages via
-  `docbook2man`.
+- **man/**: DocBook SGML man page sources (`man/*.sgml.in`), built
+  to man pages via `docbook2man`. The `.sgml.in` templates use
+  `@PACKAGE_VERSION@` which `configure` substitutes from
+  `AC_INIT` to generate the `.sgml` files. Each file contains
+  `<refmiscinfo>` elements in `<refmeta>` that set the man page
+  footer (source, version, manual section).
 
 Build steps: `aclocal && autoconf && automake --add-missing &&
 autoreconf && ./configure && make`
 
+## Code Quality
+
+- **clang-format**: Enforces consistent formatting using the GNU
+  base style. Configuration in `.clang-format`. Run
+  `scripts/check-format.sh fix` to auto-format, or
+  `scripts/check-format.sh` to check without modifying.
+
+- **cppcheck**: Static analysis for warnings and style issues.
+  Runs with `--enable=warning,style` in both CI and pre-commit.
+
+- **shellcheck**: Lints shell scripts in `scripts/`.
+
+- **actionlint**: Validates GitHub Actions workflow YAML files.
+
+- **CodeQL**: GitHub's semantic code analysis for security
+  vulnerabilities and code quality. Runs as a separate CI
+  workflow (`.github/workflows/codeql.yml`) with the
+  `security-and-quality` query suite. Also runs weekly on a
+  schedule to catch newly discovered vulnerability patterns.
+
 ## CI
 
-GitHub Actions (`.github/workflows/c.yml`): builds on Ubuntu with
-libpng-dev and docbook-utils. Runs the full autotools chain,
+Two GitHub Actions workflows:
+
+**CI** (`.github/workflows/c.yml`): runs actionlint, shellcheck,
+clang-format, and cppcheck checks first, then builds on Ubuntu
+with libpng-dev and docbook-utils. Runs the full autotools chain,
 configure, make, and make install to a staging directory. Then
 sets up a Python venv, installs test dependencies, generates test
 images, and runs the full test suite via stestr.
 
-A pre-commit hook (`scripts/build-and-test.sh`) runs the same
-build-and-test cycle locally before each commit.
+**CodeQL** (`.github/workflows/codeql.yml`): runs on push, PR,
+and weekly schedule. Performs deep semantic security and quality
+analysis of the C source code.
+
+Five pre-commit hooks run automatically before each commit:
+1. **actionlint** -- validates workflow YAML
+2. **shellcheck** -- lints shell scripts
+3. **clang-format** -- checks source formatting
+4. **cppcheck** -- static analysis
+5. **build-and-test** -- full build and test cycle
 
 ## Test Data
 
@@ -132,15 +167,14 @@ codes and stdout/stderr content. See README.md for how to run them.
 
 ## Known Bugs and Issues
 
-### Moderate
-
-1. **pngchunks.c:163 -- cast through wrong type**: Casts the CRC
-   offset to `long *` and dereferences it. Should use `int32_t *` or
-   `uint32_t *` for portability and correctness.
-
+No known bugs.
 
 ## Dependencies
 
 - **libpng** (required): PNG reading/writing for pnginfo, pngcp
 - **libm** (required): math functions for pngcp (pow in inflateraster)
 - **docbook-utils** (optional): man page generation from SGML sources
+- **clang-format** (development): code formatting enforcement
+- **cppcheck** (development): static analysis
+- **shellcheck** (development): shell script linting
+- **actionlint** (development): GitHub Actions workflow validation
