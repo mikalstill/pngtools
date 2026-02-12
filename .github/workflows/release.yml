@@ -54,14 +54,6 @@ jobs:
       - name: Create distribution tarball
         run: make dist
 
-      - name: Set up gitsign
-        uses: chainguard-dev/actions/setup-gitsign@main
-
-      - name: Create signed tag
-        run: |
-          git tag -s -m "Release v${{ inputs.version }}" "v${{ inputs.version }}"
-          git push origin "v${{ inputs.version }}"
-
       - name: Generate changelog
         run: |
           prev_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
@@ -84,6 +76,14 @@ jobs:
               echo '```'
             } > changelog.md
           fi
+
+      - name: Set up gitsign
+        uses: chainguard-dev/actions/setup-gitsign@main
+
+      - name: Create signed tag
+        run: |
+          git tag -s -m "Release v${{ inputs.version }}" "v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
 
       - name: Create GitHub Release
         run: |
