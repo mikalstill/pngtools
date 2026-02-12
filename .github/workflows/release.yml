@@ -66,19 +66,23 @@ jobs:
         run: |
           prev_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
           if [ -z "$prev_tag" ]; then
-            echo "## Changelog" > changelog.md
-            echo "" >> changelog.md
-            echo "Initial release." >> changelog.md
-            echo "" >> changelog.md
-            echo '```' >> changelog.md
-            git log --oneline --no-merges >> changelog.md
-            echo '```' >> changelog.md
+            {
+              echo "## Changelog"
+              echo ""
+              echo "Initial release."
+              echo ""
+              echo '```'
+              git log --oneline --no-merges
+              echo '```'
+            } > changelog.md
           else
-            echo "## Changelog (since $prev_tag)" > changelog.md
-            echo "" >> changelog.md
-            echo '```' >> changelog.md
-            git log --oneline --no-merges "$prev_tag"..HEAD >> changelog.md
-            echo '```' >> changelog.md
+            {
+              echo "## Changelog (since $prev_tag)"
+              echo ""
+              echo '```'
+              git log --oneline --no-merges "$prev_tag"..HEAD
+              echo '```'
+            } > changelog.md
           fi
 
       - name: Create GitHub Release
