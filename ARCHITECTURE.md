@@ -111,7 +111,7 @@ autoreconf && ./configure && make`
 
 ## CI
 
-Two GitHub Actions workflows:
+Three GitHub Actions workflows:
 
 **CI** (`.github/workflows/c.yml`): runs actionlint, shellcheck,
 clang-format, and cppcheck checks first, then builds on Ubuntu
@@ -123,6 +123,13 @@ images, and runs the full test suite via stestr.
 **CodeQL** (`.github/workflows/codeql.yml`): runs on push, PR,
 and weekly schedule. Performs deep semantic security and quality
 analysis of the C source code.
+
+**Release** (`.github/workflows/release.yml`): manually triggered
+via `workflow_dispatch`. Takes a version input (must match
+`configure.ac`), builds and tests the project, creates a `make
+dist` tarball, creates a Sigstore-signed git tag via gitsign,
+publishes a GitHub Release with the tarball attached, and attests
+the tarball provenance with `actions/attest-build-provenance`.
 
 Five pre-commit hooks run automatically before each commit:
 1. **actionlint** -- validates workflow YAML

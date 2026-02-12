@@ -98,6 +98,27 @@ scripts/check-format.sh       # check only
 scripts/check-format.sh fix   # auto-format in place
 ```
 
+## Releasing
+
+1. Update the version in `configure.ac` (`AC_INIT(pngtools, [X.Y])`)
+2. Commit and push to `master`
+3. Go to **Actions > Release > Run workflow**
+4. Enter the version string (must match `configure.ac`)
+
+The workflow will:
+- Verify the version matches `configure.ac`
+- Build and run the full test suite
+- Create a `make dist` tarball
+- Create a Sigstore-signed git tag (`vX.Y`)
+- Publish a GitHub Release with the tarball and changelog
+- Attest the tarball provenance via Sigstore
+
+Release artifacts can be verified with:
+
+```bash
+gh attestation verify pngtools-X.Y.tar.gz --owner mikalstill
+```
+
 ## Documentation
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) -- code structure, data flow,

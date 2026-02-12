@@ -1,0 +1,96 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release (must match configure.ac)'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Verify version matches configure.ac
+        run: |
+          ac_version=$(sed -n 's/^AC_INIT(pngtools, \[\(.*\)\])/\1/p' configure.ac)
+          if [ "$ac_version" != "${{ inputs.version }}" ]; then
+            echo "::error::Version mismatch: configure.ac has '$ac_version' but release requested '${{ inputs.version }}'"
+            exit 1
+          fi
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpng-dev docbook-utils
+
+      - name: Build
+        run: |
+          aclocal
+          autoconf
+          automake --add-missing
+          autoreconf
+          ./configure
+          make
+
+      - name: Test
+        run: |
+          python3 -m venv tests/.venv
+          tests/.venv/bin/pip install -r test-requirements.txt
+          tests/.venv/bin/python tests/generate_test_images.py
+          tests/.venv/bin/stestr run
+
+      - name: Create distribution tarball
+        run: make dist
+
+      - name: Set up gitsign
+        uses: chainguard-dev/actions/setup-gitsign@main
+
+      - name: Create signed tag
+        run: |
+          git tag -s -m "Release v${{ inputs.version }}" "v${{ inputs.version }}"
+          git push origin "v${{ inputs.version }}"
+
+      - name: Generate changelog
+        run: |
+          prev_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          if [ -z "$prev_tag" ]; then
+            echo "## Changelog" > changelog.md
+            echo "" >> changelog.md
+            echo "Initial release." >> changelog.md
+            echo "" >> changelog.md
+            echo '```' >> changelog.md
+            git log --oneline --no-merges >> changelog.md
+            echo '```' >> changelog.md
+          else
+            echo "## Changelog (since $prev_tag)" > changelog.md
+            echo "" >> changelog.md
+            echo '```' >> changelog.md
+            git log --oneline --no-merges "$prev_tag"..HEAD >> changelog.md
+            echo '```' >> changelog.md
+          fi
+
+      - name: Create GitHub Release
+        run: |
+          gh release create "v${{ inputs.version }}" \
+            --title "pngtools ${{ inputs.version }}" \
+            --notes-file changelog.md \
+            "pngtools-${{ inputs.version }}.tar.gz"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Attest tarball provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "pngtools-${{ inputs.version }}.tar.gz"
