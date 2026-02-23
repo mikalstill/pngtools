@@ -78,7 +78,9 @@ GNU Autotools (autoconf + automake):
   symbol), libm (`atan` symbol), and `png.h`.
 - **Makefile.am**: Builds four binaries. pnginfo and pngchunks are
   standalone; pngcp links pngread.c, pngwrite.c, and inflateraster.c.
-  pngcp additionally links libm.
+  pngcp additionally links libm. `EXTRA_DIST` includes the test
+  suite, test images, stestr config, and test requirements so that
+  `make dist` tarballs contain everything needed to run tests.
 - **man/**: DocBook SGML man page sources (`man/*.sgml.in`), built
   to man pages via `docbook2man`. The `.sgml.in` templates use
   `@PACKAGE_VERSION@` which `configure` substitutes from

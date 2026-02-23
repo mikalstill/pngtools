@@ -108,7 +108,7 @@ scripts/check-format.sh fix   # auto-format in place
 The workflow will:
 - Verify the version matches `configure.ac`
 - Build and run the full test suite
-- Create a `make dist` tarball
+- Create a `make dist` tarball (includes test suite and test images)
 - Create a Sigstore-signed git tag (`vX.Y`)
 - Publish a GitHub Release with the tarball and changelog
 - Attest the tarball provenance via Sigstore
