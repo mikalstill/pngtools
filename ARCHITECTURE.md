@@ -9,7 +9,7 @@ from 2001 and uses GNU Autotools for its build system.
 
 ## Tools
 
-### pnginfo (pnginfo.c, ~490 lines)
+### pnginfo (pnginfo.c, ~440 lines)
 
 The primary tool. Reads PNG files via libpng and displays metadata:
 image dimensions, bit depth, colour type, interlacing, compression,
@@ -164,7 +164,7 @@ Additional generated test images in `testdata/` (created by
 
 ## Test Suite
 
-53 automated tests using Python testtools + stestr, organised into
+55 automated tests using Python testtools + stestr, organised into
 four test modules matching the four tools:
 
 - `tests/test_pnginfo.py` -- metadata, tiff mode, bitmap dump, errors
