@@ -428,6 +428,6 @@ error:
 static void
 usage(void)
 {
-  fprintf(stderr, "Usage: pnginfo [-d] [-D] <filenames>\n");
+  fprintf(stderr, "Usage: pnginfo [-t] [-d] [-D] <filenames>\n");
   exit(1);
 }

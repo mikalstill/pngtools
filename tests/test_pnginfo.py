@@ -196,6 +196,13 @@ class TestPnginfoErrors(base.PngtoolsTestCase):
         self.assertEqual(1, result.returncode)
         self.assertIn('Usage:', result.stderr)
 
+    def test_usage_lists_all_flags(self):
+        """Usage message documents all supported flags."""
+        result = self.run_tool('pnginfo')
+        self.assertIn('-t', result.stderr)
+        self.assertIn('-d', result.stderr)
+        self.assertIn('-D', result.stderr)
+
     def test_missing_file(self):
         """Missing file prints error and exits 1."""
         result = self.run_pnginfo('/nonexistent/file.png')
