@@ -58,6 +58,13 @@ class TestPnginfoBasicMetadata(base.PngtoolsTestCase):
         self.assertEqual(0, result.returncode)
         self.assertIn('pixels per meter', result.stdout)
 
+    def test_image_without_phys(self):
+        """sample.png has no pHYs chunk; resolution not specified."""
+        result = self.run_pnginfo(self.sample_path('sample.png'))
+        self.assertEqual(0, result.returncode)
+        self.assertIn('Resolution: (not specified)', result.stdout)
+        self.assertNotIn('unit unknown', result.stdout)
+
     def test_exit_code_success(self):
         """Successful run returns exit code 0."""
         result = self.run_pnginfo(self.sample_path('input.png'))
@@ -195,6 +202,13 @@ class TestPnginfoErrors(base.PngtoolsTestCase):
         result = self.run_tool('pnginfo')
         self.assertEqual(1, result.returncode)
         self.assertIn('Usage:', result.stderr)
+
+    def test_usage_lists_all_flags(self):
+        """Usage message documents all supported flags."""
+        result = self.run_tool('pnginfo')
+        self.assertIn('-t', result.stderr)
+        self.assertIn('-d', result.stderr)
+        self.assertIn('-D', result.stderr)
 
     def test_missing_file(self):
         """Missing file prints error and exits 1."""

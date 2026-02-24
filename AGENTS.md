@@ -20,7 +20,7 @@ Dependencies: libpng-dev, libm, docbook-utils (for man pages).
 
 ## Testing
 
-53 automated tests using Python testtools + stestr:
+55 automated tests using Python testtools + stestr:
 
 ```bash
 # One-time setup
@@ -108,6 +108,6 @@ Or run individual checks manually:
   the corresponding `.sgml.in` man page template as well.
 
 - **CI runs the full test suite.** The GitHub Actions CI workflow
-  builds the project and runs all 53 tests. A separate CodeQL
+  builds the project and runs all 55 tests. A separate CodeQL
   workflow performs security and quality analysis. PRs must pass
   both CI checks.

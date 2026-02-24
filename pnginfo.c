@@ -228,24 +228,30 @@ pnginfo_displayfile(const char *filename, int extractBitmap, int displayBitmap, 
 
   png_uint_32 x_pixels_per_unit = 0, y_pixels_per_unit = 0;
   int phys_unit_type = PNG_RESOLUTION_UNKNOWN;
-  png_get_pHYs(png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type);
 
-  printf("  Resolution: %d, %d ", x_pixels_per_unit, y_pixels_per_unit);
-  switch (phys_unit_type)
+  if (png_get_pHYs(png, info, &x_pixels_per_unit, &y_pixels_per_unit, &phys_unit_type))
     {
-    case PNG_RESOLUTION_UNKNOWN:
-      printf("(unit unknown)");
-      break;
+      printf("  Resolution: %d, %d ", x_pixels_per_unit, y_pixels_per_unit);
+      switch (phys_unit_type)
+        {
+        case PNG_RESOLUTION_UNKNOWN:
+          printf("(unit unknown)");
+          break;
 
-    case PNG_RESOLUTION_METER:
-      printf("(pixels per meter)");
-      break;
+        case PNG_RESOLUTION_METER:
+          printf("(pixels per meter)");
+          break;
 
-    default:
-      printf("(Unknown value for unit stored)");
-      break;
+        default:
+          printf("(Unknown value for unit stored)");
+          break;
+        }
+      printf("\n");
     }
-  printf("\n");
+  else
+    {
+      printf("  Resolution: (not specified)\n");
+    }
 
   // FillOrder is always msb-to-lsb, big endian
   printf("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
@@ -428,6 +434,6 @@ error:
 static void
 usage(void)
 {
-  fprintf(stderr, "Usage: pnginfo [-d] [-D] <filenames>\n");
+  fprintf(stderr, "Usage: pnginfo [-t] [-d] [-D] <filenames>\n");
   exit(1);
 }
