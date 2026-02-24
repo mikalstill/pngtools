@@ -64,7 +64,7 @@ pnginfo -t toucan.png basn3p02.png basn6a16.png toucan.png...
  Image filter: Single row per byte filter 
  Interlacing: Adam7 interlacing 
  Compression Scheme: Deflate method 8, 32k window
- Resolution: 0, 0 (unit unknown)
+ Resolution: (not specified)
  FillOrder: msb-to-lsb
  Byte Order: Network (Big Endian)
  Number of text strings: 0 of 0
@@ -78,7 +78,7 @@ basn3p02.png...
  Image filter: Single row per byte filter 
  Interlacing: No interlacing 
  Compression Scheme: Deflate method 8, 32k window
- Resolution: 0, 0 (unit unknown)
+ Resolution: (not specified)
  FillOrder: msb-to-lsb
  Byte Order: Network (Big Endian)
  Number of text strings: 0 of 0
@@ -92,7 +92,7 @@ basn6a16.png...
  Image filter: Single row per byte filter 
  Interlacing: No interlacing 
  Compression Scheme: Deflate method 8, 32k window
- Resolution: 0, 0 (unit unknown)
+ Resolution: (not specified)
  FillOrder: msb-to-lsb
  Byte Order: Network (Big Endian)
  Number of text strings: 0 of 0

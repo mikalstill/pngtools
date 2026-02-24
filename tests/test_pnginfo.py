@@ -58,6 +58,13 @@ class TestPnginfoBasicMetadata(base.PngtoolsTestCase):
         self.assertEqual(0, result.returncode)
         self.assertIn('pixels per meter', result.stdout)
 
+    def test_image_without_phys(self):
+        """sample.png has no pHYs chunk; resolution not specified."""
+        result = self.run_pnginfo(self.sample_path('sample.png'))
+        self.assertEqual(0, result.returncode)
+        self.assertIn('Resolution: (not specified)', result.stdout)
+        self.assertNotIn('unit unknown', result.stdout)
+
     def test_exit_code_success(self):
         """Successful run returns exit code 0."""
         result = self.run_pnginfo(self.sample_path('input.png'))
