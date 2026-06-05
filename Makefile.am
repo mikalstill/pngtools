@@ -28,4 +28,6 @@ EXTRA_DIST = \
 	tests/test_pngchunkdesc.py \
 	tests/test_pngchunks.py \
 	tests/test_pngcp.py \
-	tests/test_pnginfo.py
+	tests/test_pnginfo.py \
+	configure \
+	config.h.in
