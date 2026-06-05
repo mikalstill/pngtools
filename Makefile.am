@@ -29,4 +29,5 @@ EXTRA_DIST = \
 	tests/test_pngchunks.py \
 	tests/test_pngcp.py \
 	tests/test_pnginfo.py \
-	configure
+	configure \
+	config.h.in

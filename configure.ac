@@ -2,6 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 AC_INIT(pngtools, [1.3])
 AC_CONFIG_SRCDIR([pnginfo.c])
 AC_CONFIG_AUX_DIR(config)
+AC_CONFIG_HEADERS([config.h])
 AC_REVISION
 AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
