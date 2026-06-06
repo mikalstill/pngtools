@@ -37,6 +37,25 @@ pngmem_read(png_structp png, png_bytep dst, png_size_t n)
   m->off += n;
 }
 
+// libpng would otherwise write every error and warning to stderr.
+// Malformed inputs produce hundreds of these per second, which
+// bloats workflow logs and slows the fuzzer on its write() calls.
+// The error handler must not return -- libpng requires it to
+// longjmp via png_jmpbuf, which the harness installs with setjmp.
+static void
+silent_libpng_error(png_structp png, png_const_charp msg)
+{
+  (void)msg;
+  longjmp(png_jmpbuf(png), 1);
+}
+
+static void
+silent_libpng_warning(png_structp png, png_const_charp msg)
+{
+  (void)png;
+  (void)msg;
+}
+
 int
 LLVMFuzzerInitialize(int *argc, char ***argv)
 {
@@ -56,7 +75,8 @@ LLVMFuzzerTestOneInput(const uint8_t *data, size_t size)
   if (size < 8 || png_sig_cmp((png_const_bytep)data, 0, 8) != 0)
     return 0;
 
-  png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+  png_structp png = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, silent_libpng_error,
+                                           silent_libpng_warning);
   if (!png)
     return 0;
 
