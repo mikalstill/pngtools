@@ -97,7 +97,7 @@ jobs:
             -max_total_time="$DURATION" \
             -dict=dictionary.txt \
             -max_len=1048576 \
-            -rss_limit_mb=2048 \
+            -rss_limit_mb=4096 \
             -print_final_stats=1 \
             -artifact_prefix=./ \
             corpus/${{ matrix.target }} \
