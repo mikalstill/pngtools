@@ -76,6 +76,7 @@ Or run individual checks manually:
 |-------------------|----------------------------------------------|
 | pnginfo.c         | PNG metadata display tool (main tool)        |
 | pngchunks.c       | Raw PNG chunk structure lister               |
+| pngchunks.h       | Declares pngchunks_walk for fuzz harness     |
 | pngchunkdesc.c    | Chunk name case-bit decoder                  |
 | pngcp.c           | PNG copy tool entry point                    |
 | pngread.c         | PNG reading helper (readimage)               |
@@ -86,6 +87,7 @@ Or run individual checks manually:
 | configure.ac      | Autoconf configuration                       |
 | Makefile.am       | Automake build rules                         |
 | man/*.sgml.in     | DocBook SGML man page templates               |
+| fuzz/             | Coverage-guided libFuzzer harnesses (see fuzz/README.md) |
 
 ## Things to Be Careful About
 
@@ -100,7 +102,10 @@ Or run individual checks manually:
 - **pngchunks does manual binary parsing.** It does not use libpng
   and instead memory-maps the file and walks chunk headers directly.
   Be especially careful with endianness (uses `ntohl`) and struct
-  packing assumptions when modifying this code.
+  packing assumptions when modifying this code. The parser lives in
+  `pngchunks_walk()` so it can be driven from both `main()` and the
+  fuzz harness in `fuzz/fuzz_pngchunks.c`. If you change the
+  signature or output, update both callers.
 
 - **DocBook man pages live in man/*.sgml.in.** These are templates
   processed by `configure` to substitute `@PACKAGE_VERSION@`. If
@@ -111,3 +116,12 @@ Or run individual checks manually:
   builds the project and runs the full test suite. A separate CodeQL
   workflow performs security and quality analysis. PRs must pass
   both CI checks.
+
+- **A coverage-guided fuzzer runs in CI.** `.github/workflows/fuzz.yml`
+  runs a 60-second smoke test per target on every PR touching parsing
+  code, and a 30-minute run per target nightly. Two targets exist:
+  `fuzz_pngchunks` (the manual chunk walker) and `fuzz_pnginfo` (our
+  libpng usage). Crashes are uploaded as workflow artifacts. When a
+  *scheduled* run fails, a `fuzz-failure`-labelled GitHub issue is
+  filed (or reused, one per target) so failures are noticed even when
+  nobody is watching the Actions tab.

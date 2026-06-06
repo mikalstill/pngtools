@@ -1,0 +1,154 @@
+name: Fuzz
+
+on:
+  # Brief smoke test on PRs that touch parsing code or fuzz infra
+  pull_request:
+    paths:
+      - 'fuzz/**'
+      - 'pngchunks.c'
+      - 'pngchunks.h'
+      - 'pnginfo.c'
+      - 'pngread.c'
+      - '.github/workflows/fuzz.yml'
+
+  # Daily 30-minute run per target. 04:00 UTC keeps it out of the way
+  # of the working day for European and Asia/Pacific contributors.
+  schedule:
+    - cron: '0 4 * * *'
+
+  # Manual run with a configurable budget.
+  workflow_dispatch:
+    inputs:
+      duration:
+        description: 'Fuzz duration per target (seconds)'
+        required: false
+        default: '1800'
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  fuzz:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      fail-fast: false
+      matrix:
+        target:
+          - fuzz_pngchunks
+          - fuzz_pnginfo
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang libpng-dev python3-venv
+
+      - name: Determine fuzz duration
+        id: params
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          INPUT_DURATION: ${{ inputs.duration }}
+        run: |
+          case "$EVENT_NAME" in
+            pull_request)  DURATION=60   ;;
+            schedule)      DURATION=1800 ;;
+            workflow_dispatch) DURATION="${INPUT_DURATION:-1800}" ;;
+            *)             DURATION=60   ;;
+          esac
+          echo "duration=$DURATION" >> "$GITHUB_OUTPUT"
+          echo "Fuzzing ${{ matrix.target }} for ${DURATION}s"
+
+      - name: Generate seed test images
+        run: |
+          python3 -m venv tests/.venv
+          tests/.venv/bin/pip install -q -r test-requirements.txt
+          tests/.venv/bin/python tests/generate_test_images.py
+
+      - name: Build fuzz target
+        working-directory: fuzz
+        run: make ${{ matrix.target }}
+
+      - name: Restore corpus cache
+        id: cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: fuzz/corpus/${{ matrix.target }}
+          key: fuzz-corpus-${{ matrix.target }}-${{ github.run_id }}
+          restore-keys: |
+            fuzz-corpus-${{ matrix.target }}-
+
+      - name: Seed corpus
+        working-directory: fuzz
+        run: ./seed-corpus.sh
+
+      - name: Run fuzzer
+        working-directory: fuzz
+        env:
+          DURATION: ${{ steps.params.outputs.duration }}
+        run: |
+          set +e
+          ./${{ matrix.target }} \
+            -max_total_time="$DURATION" \
+            -dict=dictionary.txt \
+            -max_len=1048576 \
+            -rss_limit_mb=4096 \
+            -print_final_stats=1 \
+            -artifact_prefix=./ \
+            corpus/${{ matrix.target }} \
+            2>&1 | tee fuzz.log
+          STATUS=${PIPESTATUS[0]}
+          echo "fuzzer exit status: $STATUS"
+          exit "$STATUS"
+
+      - name: Save corpus cache
+        if: |
+          success() &&
+          (github.event_name == 'schedule'
+           || github.event_name == 'workflow_dispatch')
+        uses: actions/cache/save@v4
+        with:
+          path: fuzz/corpus/${{ matrix.target }}
+          key: fuzz-corpus-${{ matrix.target }}-${{ github.run_id }}
+
+      - name: Upload crash artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-crashes-${{ github.run_id }}
+          path: |
+            fuzz/crash-*
+            fuzz/leak-*
+            fuzz/timeout-*
+            fuzz/oom-*
+            fuzz/fuzz.log
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: File or update tracking issue
+        if: failure() && github.event_name == 'schedule'
+        uses: JasonEtco/create-an-issue@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          FUZZ_TARGET: ${{ matrix.target }}
+          FUZZ_ACTION_RUN: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        with:
+          filename: .github/workflows/fuzz-failure.md
+          update_existing: true
+          search_existing: open
+
+      - name: Upload corpus snapshot
+        if: |
+          always() &&
+          (github.event_name == 'schedule'
+           || github.event_name == 'workflow_dispatch')
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.target }}-corpus-${{ github.run_id }}
+          path: fuzz/corpus/${{ matrix.target }}
+          retention-days: 14

@@ -5,9 +5,9 @@ pngchunks
 pngchunkdesc
 *.o
 
-# Autotools generated files
-Makefile
-Makefile.in
+# Autotools generated files (top-level only -- fuzz/Makefile is hand-written)
+/Makefile
+/Makefile.in
 aclocal.m4
 autom4te.cache/
 config.h
@@ -33,6 +33,9 @@ tests/__pycache__/
 __pycache__/
 .stestr/
 testdata/
+
+# Downloaded CI tooling
+actionlint
 
 # Generated man pages
 man/Makefile
