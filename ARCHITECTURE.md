@@ -9,7 +9,7 @@ from 2001 and uses GNU Autotools for its build system.
 
 ## Tools
 
-### pnginfo (pnginfo.c, ~440 lines)
+### pnginfo (pnginfo.c)
 
 The primary tool. Reads PNG files via libpng and displays metadata:
 image dimensions, bit depth, colour type, interlacing, compression,
@@ -23,7 +23,7 @@ resolution, and embedded text chunks. Has three modes:
 The bitmap dump includes run-length compression for zero-valued
 pixels, printing them once and then showing a repeat count.
 
-### pngchunks (pngchunks.c, ~190 lines)
+### pngchunks (pngchunks.c)
 
 Lists the raw chunk structure of a PNG file. Unlike pnginfo, this tool
 does **not** use libpng -- it memory-maps the file with `mmap()` and
@@ -34,13 +34,13 @@ is decoded to show its case-encoded properties (critical/ancillary,
 public/private, etc.). All pointer advances are bounds-checked against
 the mmap'd region to prevent segfaults on malformed input.
 
-### pngchunkdesc (pngchunkdesc.c, ~48 lines)
+### pngchunkdesc (pngchunkdesc.c)
 
 A stdin/stdout filter that reads four-character PNG chunk names and
 decodes the case information embedded in each letter. Uses the shared
 `chunk_meanings` lookup table from `chunk_meanings.h`.
 
-### pngcp (pngcp.c + pngread.c + pngwrite.c + inflateraster.c, ~350 lines total)
+### pngcp (pngcp.c + pngread.c + pngwrite.c + inflateraster.c)
 
 Copies a PNG file while optionally changing bit depth (`-d`) and/or
 the number of samples per pixel (`-s`). The pipeline is:
@@ -161,10 +161,11 @@ Additional generated test images in `testdata/` (created by
 | interlaced.png         | 32x32      | 8         | RGB (Adam7)        |
 | with_text.png          | 32x32      | 8         | RGB + tEXt chunks  |
 | with_transparency.png  | 32x32      | 8         | Paletted + tRNS    |
+| text_after_idat.png    | 8x8        | 8         | RGB + post-IDAT tEXt |
 
 ## Test Suite
 
-55 automated tests using Python testtools + stestr, organised into
+Automated tests use Python testtools + stestr, organised into
 four test modules matching the four tools:
 
 - `tests/test_pnginfo.py` -- metadata, tiff mode, bitmap dump, errors

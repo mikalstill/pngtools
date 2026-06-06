@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-pngtools is a small C project (~1,100 lines across 7 source files)
+pngtools is a small C project (7 source files)
 providing four command-line PNG utilities: pnginfo, pngchunks,
 pngchunkdesc, and pngcp. It uses libpng for PNG I/O and GNU Autotools
 for building. See ARCHITECTURE.md for detailed structure and known
@@ -20,7 +20,7 @@ Dependencies: libpng-dev, libm, docbook-utils (for man pages).
 
 ## Testing
 
-55 automated tests using Python testtools + stestr:
+Automated tests use Python testtools + stestr:
 
 ```bash
 # One-time setup
@@ -108,6 +108,6 @@ Or run individual checks manually:
   the corresponding `.sgml.in` man page template as well.
 
 - **CI runs the full test suite.** The GitHub Actions CI workflow
-  builds the project and runs all 55 tests. A separate CodeQL
+  builds the project and runs the full test suite. A separate CodeQL
   workflow performs security and quality analysis. PRs must pass
   both CI checks.
