@@ -19,10 +19,22 @@ SAMPLE_DIR = PROJECT_ROOT
 TESTDATA_DIR = os.path.join(PROJECT_ROOT, 'testdata')
 
 
+REQUIRED_TEST_IMAGES = (
+    'paletted.png',
+    'interlaced.png',
+    'with_text.png',
+    'with_transparency.png',
+    'text_after_idat.png',
+)
+
+
 def _ensure_test_images():
-    """Generate test images if they don't exist yet."""
-    marker = os.path.join(TESTDATA_DIR, 'with_text.png')
-    if not os.path.exists(marker):
+    """Generate test images if any are missing."""
+    missing = any(
+        not os.path.exists(os.path.join(TESTDATA_DIR, name))
+        for name in REQUIRED_TEST_IMAGES
+    )
+    if missing:
         script = os.path.join(
             PROJECT_ROOT, 'tests', 'generate_test_images.py'
         )

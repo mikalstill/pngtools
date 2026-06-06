@@ -115,6 +115,20 @@ class TestPnginfoGeneratedImages(base.PngtoolsTestCase):
         self.assertEqual(0, result.returncode)
         self.assertIn('Adam7 interlacing', result.stdout)
 
+    def test_interlaced_image_bitmap_dump(self):
+        """-D on an Adam7 image succeeds.
+
+        Decoding interlaced PNGs requires
+        png_set_interlace_handling before png_read_image; without
+        it libpng aborts with 'bad adaptive filter value'.
+        """
+        result = self.run_pnginfo(
+            self.generated_path('interlaced.png'), flags=['-D']
+        )
+        self.assertEqual(0, result.returncode)
+        self.assertNotIn('bad adaptive filter', result.stderr)
+        self.assertIn('Adam7 interlacing', result.stdout)
+
     def test_text_chunks(self):
         """with_text.png shows text chunk metadata."""
         result = self.run_pnginfo(
@@ -124,6 +138,20 @@ class TestPnginfoGeneratedImages(base.PngtoolsTestCase):
         self.assertIn('Number of text strings: 2', result.stdout)
         self.assertIn('Author', result.stdout)
         self.assertIn('Description', result.stdout)
+
+    def test_text_chunks_after_idat(self):
+        """text_after_idat.png: tEXt placed after IDAT is visible.
+
+        Regression coverage for
+        https://bugs.launchpad.net/ubuntu/+source/pngtools/+bug/1989739
+        """
+        result = self.run_pnginfo(
+            self.generated_path('text_after_idat.png')
+        )
+        self.assertEqual(0, result.returncode)
+        self.assertIn('Number of text strings: 1', result.stdout)
+        self.assertIn('Description', result.stdout)
+        self.assertIn('Hello, world!', result.stdout)
 
     def test_paletted_with_transparency(self):
         """with_transparency.png shows paletted with alpha."""

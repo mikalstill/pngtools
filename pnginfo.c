@@ -256,6 +256,41 @@ pnginfo_displayfile(const char *filename, int extractBitmap, int displayBitmap, 
   // FillOrder is always msb-to-lsb, big endian
   printf("  FillOrder: msb-to-lsb\n  Byte Order: Network (Big Endian)\n");
 
+  // Always read the image data so that tEXt/iTXt/zTXt chunks placed
+  // after IDAT become visible via png_get_text. Transforms (packing,
+  // palette expansion) only matter when we will dump the bitmap.
+  // See https://bugs.launchpad.net/ubuntu/+source/pngtools/+bug/1989739
+  if (extractBitmap == pnginfo_true)
+    {
+      if (bitdepth < 8)
+        png_set_packing(png);
+
+      if (colourtype == PNG_COLOR_TYPE_PALETTE)
+        png_set_expand(png);
+    }
+
+  // Required for Adam7 PNGs before png_read_image.
+  png_set_interlace_handling(png);
+
+  png_read_update_info(png, info);
+
+  rowbytes = png_get_rowbytes(png, info);
+  if ((bitmap = malloc((rowbytes * height) + 1)) == NULL)
+    {
+      fprintf(stderr, "Could not allocate memory for bitmap\n");
+      goto error;
+    }
+  if ((row_pointers = malloc(height * sizeof(png_bytep))) == NULL)
+    {
+      fprintf(stderr, "Could not allocate memory for row pointers\n");
+      goto error;
+    }
+
+  for (i = 0; i < height; ++i)
+    row_pointers[i] = bitmap + (i * rowbytes);
+  png_read_image(png, row_pointers);
+  png_read_end(png, info);
+
   png_textp text;
   int num_text, ti;
   num_text = png_get_text(png, info, &text, NULL);
@@ -308,39 +343,8 @@ pnginfo_displayfile(const char *filename, int extractBitmap, int displayBitmap, 
   // Print a blank line
   printf("\n");
 
-  // Do we want to extract the image data? We are meant to tell the user if
-  // there are errors, but we don't currently trap any errors here -- I need
-  // to look into this
   if (extractBitmap == pnginfo_true)
     {
-      // This will force the samples to be packed to the byte boundary
-      if (bitdepth < 8)
-        png_set_packing(png);
-
-      if (colourtype == PNG_COLOR_TYPE_PALETTE)
-        png_set_expand(png);
-
-      // png_set_strip_alpha (png);
-      png_read_update_info(png, info);
-
-      rowbytes = png_get_rowbytes(png, info);
-      if ((bitmap = malloc((rowbytes * height) + 1)) == NULL)
-        {
-          fprintf(stderr, "Could not allocate memory for bitmap\n");
-          goto error;
-        }
-      if ((row_pointers = malloc(height * sizeof(png_bytep))) == NULL)
-        {
-          fprintf(stderr, "Could not allocate memory for row pointers\n");
-          goto error;
-        }
-
-      // Get the image bitmap
-      for (i = 0; i < height; ++i)
-        row_pointers[i] = bitmap + (i * rowbytes);
-      png_read_image(png, row_pointers);
-      png_read_end(png, NULL);
-
       // Do we want to display this bitmap?
       if (displayBitmap == pnginfo_true)
         {

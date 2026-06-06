@@ -60,14 +60,42 @@ def generate_interlaced(output_dir):
 
 
 def _save_interlaced_png(img, path):
-    """Save a PNG with Adam7 interlacing using raw bytes."""
+    """Save a 24-bit RGB PNG with valid Adam7 interlacing.
+
+    Pillow's high-level save() does not honour interlace=1, so we
+    emit the seven Adam7 passes manually.
+    """
     import struct
     import zlib
 
     width, height = img.size
-    raw_data = img.tobytes()
+    pixels = img.tobytes()
+    stride = width * 3
 
-    # Build IHDR
+    # Adam7: (col_start, row_start, col_step, row_step) per pass.
+    passes = [
+        (0, 0, 8, 8),
+        (4, 0, 8, 8),
+        (0, 4, 4, 8),
+        (2, 0, 4, 4),
+        (0, 2, 2, 4),
+        (1, 0, 2, 2),
+        (0, 1, 1, 2),
+    ]
+
+    raw_stream = b''
+    for col_start, row_start, col_step, row_step in passes:
+        pass_w = (width - col_start + col_step - 1) // col_step
+        pass_h = (height - row_start + row_step - 1) // row_step
+        if pass_w <= 0 or pass_h <= 0:
+            continue
+        for y in range(row_start, height, row_step):
+            row = b'\x00'  # filter byte: None
+            for x in range(col_start, width, col_step):
+                off = y * stride + x * 3
+                row += pixels[off:off + 3]
+            raw_stream += row
+
     ihdr_data = struct.pack(
         '>IIBBBBB',
         width, height,
@@ -77,18 +105,9 @@ def _save_interlaced_png(img, path):
         0,  # filter
         1   # interlace (Adam7)
     )
-
-    # Build IDAT with filter byte (0 = None) per row
-    raw_rows = b''
-    stride = width * 3
-    for y in range(height):
-        raw_rows += b'\x00'  # filter byte
-        raw_rows += raw_data[y * stride:(y + 1) * stride]
-
-    compressed = zlib.compress(raw_rows)
+    compressed = zlib.compress(raw_stream)
 
     with open(path, 'wb') as f:
-        # PNG signature
         f.write(b'\x89PNG\r\n\x1a\n')
 
         def write_chunk(chunk_type, data):
@@ -115,6 +134,53 @@ def generate_with_text(output_dir):
         os.path.join(output_dir, 'with_text.png'),
         pnginfo=info
     )
+
+
+def generate_with_text_after_idat(output_dir):
+    """Create a PNG with a tEXt chunk placed *after* IDAT.
+
+    Regression coverage for
+    https://bugs.launchpad.net/ubuntu/+source/pngtools/+bug/1989739
+    The PNG spec permits text chunks either side of IDAT, and
+    `exiftool` historically wrote them at the tail of the file.
+    Earlier pnginfo called png_get_text before consuming IDAT,
+    so post-IDAT text chunks were invisible.
+    """
+    import struct
+    import zlib
+
+    width, height = 8, 8
+    img = Image.new('RGB', (width, height), color=(50, 100, 150))
+    raw = img.tobytes()
+
+    ihdr = struct.pack(
+        '>IIBBBBB', width, height, 8, 2, 0, 0, 0
+    )
+
+    stride = width * 3
+    rows = b''
+    for y in range(height):
+        rows += b'\x00' + raw[y * stride:(y + 1) * stride]
+    idat = zlib.compress(rows)
+
+    keyword = b'Description'
+    value = b'Hello, world!'
+    text_data = keyword + b'\x00' + value
+
+    def chunk(ctype, data):
+        crc = zlib.crc32(ctype + data) & 0xFFFFFFFF
+        return (
+            struct.pack('>I', len(data)) + ctype + data
+            + struct.pack('>I', crc)
+        )
+
+    path = os.path.join(output_dir, 'text_after_idat.png')
+    with open(path, 'wb') as f:
+        f.write(b'\x89PNG\r\n\x1a\n')
+        f.write(chunk(b'IHDR', ihdr))
+        f.write(chunk(b'IDAT', idat))
+        f.write(chunk(b'tEXt', text_data))
+        f.write(chunk(b'IEND', b''))
 
 
 def generate_with_transparency(output_dir):
@@ -151,6 +217,7 @@ def main():
     generate_paletted(output_dir)
     generate_interlaced(output_dir)
     generate_with_text(output_dir)
+    generate_with_text_after_idat(output_dir)
     generate_with_transparency(output_dir)
 
     print(f'Generated test images in {output_dir}')
