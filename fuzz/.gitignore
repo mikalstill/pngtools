@@ -1,0 +1,9 @@
+fuzz_pngchunks
+fuzz_pnginfo
+corpus/
+crash-*
+leak-*
+timeout-*
+oom-*
+slow-unit-*
+*.profraw

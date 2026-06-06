@@ -1,0 +1,54 @@
+# libFuzzer dictionary for PNG inputs. Keywords are inserted into
+# mutations so the fuzzer can hit chunk-type boundaries quickly
+# instead of having to evolve them byte-by-byte. See
+# https://llvm.org/docs/LibFuzzer.html#dictionaries
+
+# PNG signature. The libFuzzer dictionary format only honours \xNN
+# escapes (not \r or \n), so write the signature byte-by-byte.
+"\x89\x50\x4e\x47\x0d\x0a\x1a\x0a"
+
+# Critical chunks
+"IHDR"
+"PLTE"
+"IDAT"
+"IEND"
+
+# Ancillary chunks defined by the PNG 1.2 spec
+"tRNS"
+"cHRM"
+"gAMA"
+"iCCP"
+"sBIT"
+"sRGB"
+"tEXt"
+"zTXt"
+"iTXt"
+"bKGD"
+"hIST"
+"pHYs"
+"sPLT"
+"tIME"
+
+# MNG / APNG extensions occasionally seen in the wild
+"acTL"
+"fcTL"
+"fdAT"
+"oFFs"
+"pCAL"
+"sCAL"
+
+# Common keyword strings
+"Title"
+"Author"
+"Description"
+"Copyright"
+"Creation Time"
+"Software"
+"Comment"
+
+# IHDR field values worth pinning
+"\x00\x00\x00\x0d"
+"\x00\x00\x00\x00"
+"\x00\x00\x00\x01"
+"\xff\xff\xff\xff"
+"\x7f\xff\xff\xff"

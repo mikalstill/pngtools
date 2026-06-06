@@ -81,6 +81,13 @@ Or use the all-in-one script that handles building and testing
 scripts/build-and-test.sh
 ```
 
+### Fuzzing
+
+Coverage-guided fuzz harnesses live in `fuzz/` and run in CI: a 60-second
+smoke test on every PR that touches parsing code, and a 30-minute run
+per target nightly. See [fuzz/README.md](fuzz/README.md) for how to
+build and run them locally.
+
 ### Pre-commit Hooks
 
 Pre-commit hooks enforce formatting (clang-format), static

@@ -34,6 +34,12 @@ is decoded to show its case-encoded properties (critical/ancillary,
 public/private, etc.). All pointer advances are bounds-checked against
 the mmap'd region to prevent segfaults on malformed input.
 
+The chunk-walking loop is factored into `pngchunks_walk(data, size,
+verbose)` (declared in `pngchunks.h`) so the same code is exercised by
+the `pngchunks` binary, the test suite, and the `fuzz_pngchunks`
+libFuzzer harness. A `verbose=0` call is silent and used by the fuzzer
+to avoid being bottlenecked on `write()`.
+
 ### pngchunkdesc (pngchunkdesc.c)
 
 A stdin/stdout filter that reads four-character PNG chunk names and
@@ -113,7 +119,7 @@ autoreconf && ./configure && make`
 
 ## CI
 
-Three GitHub Actions workflows:
+Four GitHub Actions workflows:
 
 **CI** (`.github/workflows/c.yml`): runs actionlint, shellcheck,
 clang-format, and cppcheck checks first, then builds on Ubuntu
@@ -125,6 +131,13 @@ images, and runs the full test suite via stestr.
 **CodeQL** (`.github/workflows/codeql.yml`): runs on push, PR,
 and weekly schedule. Performs deep semantic security and quality
 analysis of the C source code.
+
+**Fuzz** (`.github/workflows/fuzz.yml`): runs coverage-guided
+libFuzzer harnesses against the chunk parser (`fuzz_pngchunks`) and
+our libpng usage (`fuzz_pnginfo`). A 60-second smoke test runs on
+every PR touching parsing code; a 30-minute run per target runs
+nightly at 04:00 UTC. The corpus is cached between scheduled runs;
+crashes are uploaded as workflow artifacts. See `fuzz/README.md`.
 
 **Release** (`.github/workflows/release.yml`): manually triggered
 via `workflow_dispatch`. Takes a version input (must match
