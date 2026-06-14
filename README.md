@@ -22,6 +22,16 @@ several Linux distributions.
 - **pngcp**: Copy a PNG file while optionally changing the bit depth
   (`-d`) and number of samples per pixel (`-s`).
 
+## Packaging status
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/pngtools.svg?minversion=1.3)](https://repology.org/project/pngtools/versions)
+
+The badge above (via [Repology](https://repology.org/project/pngtools/versions))
+shows the pngtools version each distribution currently ships. Find your
+distribution in the list: green means it is up to date with the current
+upstream release, red means it is behind. Note that GitHub caches badge
+images, so the badge can lag the live data on Repology by a while.
+
 ## Building
 
 Requires libpng-dev and optionally docbook-utils (for man pages):
